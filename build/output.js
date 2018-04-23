@@ -2750,31 +2750,18 @@ var PS = {};
           globalValue = v;
       };
   };
-  exports.txt = function(t) {
-      return function() {
-          console.log(t);
-          // var baseNode = document.querySelector(".test-element");
-          // console.log(baseNode);
-          // var view = function(m) {
-          //     return vdom.text(m);
-          // };
 
-          // var model = "some text";
-          // var renderer = vdom.normalRenderer(baseNode, view);
-          // var updateView = renderer(enqueue, model);
+  exports.renderOnce = function(view) {
+      return function(initialModel) {
+          return function() {
+              var baseNode = document.querySelector(".test-element");
 
-          // function withNewModel(value) {
-          //     return function() {
-          //         model = value;
-          //         console.log("New model", model);
-          //         updateView(model);
-          //     };
-          // }
+              var model = initialModel;
+              var renderer = vdom.normalRenderer(baseNode, view);
+              var updateView = renderer(enqueue, model);
 
-          // setTimeout(withNewModel("First text"), 1000);
-          // setTimeout(withNewModel("Second text"), 3000);
-          // setTimeout(withNewModel("Third text"), 5000);
-          // console.log("Called it all");
+              updateView(model);
+          };
       };
   };
 })(PS["Elm.VirtualDom"] = PS["Elm.VirtualDom"] || {});
@@ -2788,7 +2775,7 @@ var PS = {};
   var Data_Tuple = PS["Data.Tuple"];
   var Elm_Json_Encode = PS["Elm.Json.Encode"];
   var Prelude = PS["Prelude"];
-  exports["txt"] = $foreign.txt;
+  exports["renderOnce"] = $foreign.renderOnce;
   exports["text"] = $foreign.text;
   exports["node"] = $foreign.node;
   exports["property"] = $foreign.property;
@@ -2808,9 +2795,11 @@ var PS = {};
   var Elm_VirtualDom = PS["Elm.VirtualDom"];
   var Prelude = PS["Prelude"];        
   var main = (function () {
-      var nd = Elm_VirtualDom.node("div")(new Data_List_Types.Cons(Elm_VirtualDom.property("id")(Elm_Json_Encode.string("greeting")), Data_Monoid.mempty(Data_List_Types.monoidList)))(new Data_List_Types.Cons(Elm_VirtualDom.text("Hello!"), Data_Monoid.mempty(Data_List_Types.monoidList)));
+      var view = function (m) {
+          return Elm_VirtualDom.node("div")(new Data_List_Types.Cons(Elm_VirtualDom.property("id")(Elm_Json_Encode.string("greeting")), Data_Monoid.mempty(Data_List_Types.monoidList)))(new Data_List_Types.Cons(Elm_VirtualDom.text(m), Data_Monoid.mempty(Data_List_Types.monoidList)));
+      };
       return function __do() {
-          Elm_VirtualDom.txt(nd)();
+          Elm_VirtualDom.renderOnce(view)("Initial Model")();
           Elm_VirtualDom.anything(new Data_List_Types.Cons(1, new Data_List_Types.Cons(2, Data_Monoid.mempty(Data_List_Types.monoidList))))();
           return Control_Monad_Eff_Console.log("Hello sucker!")();
       };

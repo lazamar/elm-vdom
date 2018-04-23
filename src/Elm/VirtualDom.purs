@@ -2,7 +2,7 @@ module Elm.VirtualDom
 	( DOM
 	, Node
 	, Property
-	, txt
+	, renderOnce
 	, text
 	, node
 	, property
@@ -20,7 +20,9 @@ import Data.Tuple (Tuple)
 -- Define DOM effect type
 foreign import data DOM :: Effect
 
-foreign import txt :: forall msg a. Node msg -> Eff (dom :: DOM | a ) Unit
+-- type ViewFunc msg model = model -> Node msg
+
+foreign import renderOnce :: forall msg model a. (model -> Node msg) -> model -> Eff (dom :: DOM | a ) Unit
 foreign import anything :: forall a b. b -> Eff (dom :: DOM | a ) Unit
 
 -- module VirtualDom exposing

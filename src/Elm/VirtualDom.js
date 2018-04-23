@@ -1866,30 +1866,17 @@ exports.anything = function(v) {
         globalValue = v;
     };
 };
-exports.txt = function(t) {
-    return function() {
-        console.log(t);
-        // var baseNode = document.querySelector(".test-element");
-        // console.log(baseNode);
-        // var view = function(m) {
-        //     return vdom.text(m);
-        // };
 
-        // var model = "some text";
-        // var renderer = vdom.normalRenderer(baseNode, view);
-        // var updateView = renderer(enqueue, model);
+exports.renderOnce = function(view) {
+    return function(initialModel) {
+        return function() {
+            var baseNode = document.querySelector(".test-element");
 
-        // function withNewModel(value) {
-        //     return function() {
-        //         model = value;
-        //         console.log("New model", model);
-        //         updateView(model);
-        //     };
-        // }
+            var model = initialModel;
+            var renderer = vdom.normalRenderer(baseNode, view);
+            var updateView = renderer(enqueue, model);
 
-        // setTimeout(withNewModel("First text"), 1000);
-        // setTimeout(withNewModel("Second text"), 3000);
-        // setTimeout(withNewModel("Third text"), 5000);
-        // console.log("Called it all");
+            updateView(model);
+        };
     };
 };
