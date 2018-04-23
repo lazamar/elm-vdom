@@ -118,7 +118,7 @@ function F9(fun) {
     });
 }
 
-var _elm_lang$core$Native_Json = (function() {
+window._elm_lang$core$Native_Json = (function() {
     // CORE DECODERS
 
     function succeed(msg) {
@@ -630,7 +630,7 @@ var _elm_lang$core$Native_Json = (function() {
     };
 })();
 
-const json = _elm_lang$core$Native_Json;
+const json = window._elm_lang$core$Native_Json;
 
 exports.encode = json.encode;
 exports.runOnString = json.runOnString;

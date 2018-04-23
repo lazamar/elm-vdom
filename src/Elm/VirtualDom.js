@@ -1,6 +1,5 @@
 /* globals  
     _elm_lang$core$Native_Utils, 
-    _elm_lang$core$Native_Json ,
     _elm_lang$core$Json_Decode$map,
     _elm_lang$core$Platform_Cmd$none,
     _elm_lang$core$Platform_Sub$none,
@@ -9,6 +8,7 @@
 */
 /* eslint-disable no-unused-vars, no-use-before-define, no-redeclare, complexity, max-len */
 // Compiler functions
+
 function F(arity, fun, wrapper) {
     wrapper.a = arity;
     wrapper.f = fun;
@@ -188,11 +188,11 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
         var children = [];
         var descendantsCount = 0;
-        while (kidList.ctor !== "[]") {
-            var kid = kidList._0;
+        while (kidList.constructor.name !== "Nil") {
+            var kid = kidList.value0;
             descendantsCount += kid.descendantsCount || 0;
             children.push(kid);
-            kidList = kidList._1;
+            kidList = kidList.value1;
         }
         descendantsCount += children.length;
 
@@ -213,11 +213,11 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
         var children = [];
         var descendantsCount = 0;
-        while (kidList.ctor !== "[]") {
-            var kid = kidList._0;
-            descendantsCount += kid._1.descendantsCount || 0;
+        while (kidList.constructor.name !== "Nil") {
+            var kid = kidList.value0;
+            descendantsCount += kid.value1.descendantsCount || 0;
             children.push(kid);
-            kidList = kidList._1;
+            kidList = kidList.value1;
         }
         descendantsCount += children.length;
 
@@ -285,8 +285,8 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         var namespace,
             facts = {};
 
-        while (factList.ctor !== "[]") {
-            var entry = factList._0;
+        while (factList.constructor.name !== "Nil") {
+            var entry = factList.value0;
             var key = entry.key;
 
             if (key === ATTR_KEY || key === ATTR_NS_KEY || key === EVENT_KEY) {
@@ -296,10 +296,10 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
             } else if (key === STYLE_KEY) {
                 var styles = facts[key] || {};
                 var styleList = entry.value;
-                while (styleList.ctor !== "[]") {
-                    var style = styleList._0;
-                    styles[style._0] = style._1;
-                    styleList = styleList._1;
+                while (styleList.constructor.name !== "Nil") {
+                    var style = styleList.value0;
+                    styles[style.value0] = style.value1;
+                    styleList = styleList.value1;
                 }
                 facts[key] = styles;
             } else if (key === "namespace") {
@@ -311,7 +311,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
             } else {
                 facts[key] = entry.value;
             }
-            factList = factList._1;
+            factList = factList.value1;
         }
 
         return {
@@ -375,7 +375,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 return false;
             }
         }
-        return _elm_lang$core$Native_Json.equality(a.decoder, b.decoder);
+        return window._elm_lang$core$Native_Json.equality(a.decoder, b.decoder);
     }
 
     function mapProperty(func, property) {
@@ -444,7 +444,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 var children = vNode.children;
 
                 for (var i = 0; i < children.length; i++) {
-                    domNode.appendChild(render(children[i]._1, eventNode));
+                    domNode.appendChild(render(children[i].value1, eventNode));
                 }
 
                 return domNode;
@@ -526,7 +526,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         function eventHandler(event) {
             var info = eventHandler.info;
 
-            var value = A2(_elm_lang$core$Native_Json.run, info.decoder, event);
+            var value = A2(window._elm_lang$core$Native_Json.run, info.decoder, event);
 
             if (value.ctor === "Ok") {
                 var options = info.options;
@@ -537,7 +537,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                     event.preventDefault();
                 }
 
-                var message = value._0;
+                var message = value.value0;
 
                 var currentEventNode = eventNode;
                 while (currentEventNode) {
@@ -869,10 +869,10 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
             var a = aChildren[aIndex];
             var b = bChildren[bIndex];
 
-            var aKey = a._0;
-            var bKey = b._0;
-            var aNode = a._1;
-            var bNode = b._1;
+            var aKey = a.value0;
+            var bKey = b.value0;
+            var aNode = a.value1;
+            var bNode = b.value1;
 
             // check if keys match
 
@@ -893,15 +893,15 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
             if (aLookAhead) {
                 var aNext = aChildren[aIndex + 1];
-                var aNextKey = aNext._0;
-                var aNextNode = aNext._1;
+                var aNextKey = aNext.value0;
+                var aNextNode = aNext.value1;
                 var oldMatch = bKey === aNextKey;
             }
 
             if (bLookAhead) {
                 var bNext = bChildren[bIndex + 1];
-                var bNextKey = bNext._0;
-                var bNextNode = bNext._1;
+                var bNextKey = bNext.value0;
+                var bNextNode = bNext.value1;
                 var newMatch = aKey === bNextKey;
             }
 
@@ -972,8 +972,8 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         while (aIndex < aLen) {
             index++;
             var a = aChildren[aIndex];
-            var aNode = a._1;
-            removeNode(changes, localPatches, a._0, aNode, index);
+            var aNode = a.value1;
+            removeNode(changes, localPatches, a.value0, aNode, index);
             index += aNode.descendantsCount || 0;
             aIndex++;
         }
@@ -982,7 +982,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         while (bIndex < bLen) {
             endInserts = endInserts || [];
             var b = bChildren[bIndex];
-            insertNode(changes, localPatches, b._0, b._1, undefined, endInserts);
+            insertNode(changes, localPatches, b.value0, b.value1, undefined, endInserts);
             bIndex++;
         }
 
@@ -1177,7 +1177,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 var childNodes = domNode.childNodes;
                 for (var j = 0; j < vChildren.length; j++) {
                     low++;
-                    var vChild = vChildren[j]._1;
+                    var vChild = vChildren[j].value1;
                     var nextLow = low + (vChild.descendantsCount || 0);
                     if (low <= index && index <= nextLow) {
                         i = addDomNodesHelp(
@@ -1415,9 +1415,9 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 crash(errorMessage, domNode);
             }
 
-            var result = A2(_elm_lang$core$Native_Json.run, flagDecoder, flags);
+            var result = A2(window._elm_lang$core$Native_Json.run, flagDecoder, flags);
             if (result.ctor === "Ok") {
-                return init(result._0);
+                return init(result.value0);
             }
 
             var errorMessage =
@@ -1425,7 +1425,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 moduleName +
                 "` module with an unexpected flag.\n" +
                 "I tried to convert it to an Elm value, but ran into this problem:\n\n" +
-                result._0;
+                result.value0;
 
             crash(errorMessage, domNode);
         };
@@ -1585,7 +1585,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
             var appStepper = makeStepper(appNode, view, appVirtualNode, appEventNode);
 
             // make overlay stepper
-            var overVirtualNode = viewIn(initialModel)._1;
+            var overVirtualNode = viewIn(initialModel).value1;
             var overNode = render(overVirtualNode, eventNode);
             parentNode.appendChild(overNode);
             var wrappedViewIn = wrapViewIn(appEventNode, overNode, viewIn);
@@ -1701,7 +1701,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
         return function(model) {
             var tuple = viewIn(model);
-            var newBlocking = tuple._0.ctor;
+            var newBlocking = tuple.value0.ctor;
             appEventNode.tagger = newBlocking === "Normal" ? normalTagger : blockTagger;
             if (blocking !== newBlocking) {
                 traverse("removeEventListener", ignorer, blocking);
@@ -1718,7 +1718,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
                 blocking = newBlocking;
             }
-            return tuple._1;
+            return tuple.value1;
         };
     }
 
@@ -1833,35 +1833,63 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
 var vdom = _elm_lang$virtual_dom$Native_VirtualDom;
 
+exports.node = vdom.node;
+exports.text = vdom.text;
+exports.custom = vdom.custom;
+exports.map = vdom.map;
+
+exports.on = vdom.on;
+exports.style = vdom.style;
+exports.property = vdom.property;
+exports.attribute = vdom.attribute;
+exports.attributeNS = vdom.attributeNS;
+exports.mapProperty = vdom.mapProperty;
+
+exports.lazy = vdom.lazy;
+exports.lazy2 = vdom.lazy2;
+exports.lazy3 = vdom.lazy3;
+exports.keyedNode = vdom.keyedNode;
+
+exports.program = vdom.program;
+exports.programWithFlags = vdom.programWithFlags;
+exports.staticProgram = vdom.staticProgram;
+
 // When the UI sends a message, that's the function it will call
 function enqueue(msg) {
     console.log("A Message was emmitted");
     console.log(msg);
 }
 
-exports.text = function(t) {
+exports.anything = function(v) {
     return function() {
-        var baseNode = document.querySelector(".test-element");
-        console.log(baseNode);
-        var view = function(m) {
-            return vdom.text(m);
-        };
+        console.log(v);
+        globalValue = v;
+    };
+};
+exports.txt = function(t) {
+    return function() {
+        console.log(t);
+        // var baseNode = document.querySelector(".test-element");
+        // console.log(baseNode);
+        // var view = function(m) {
+        //     return vdom.text(m);
+        // };
 
-        var model = "some text";
-        var renderer = vdom.normalRenderer(baseNode, view);
-        var updateView = renderer(enqueue, model);
+        // var model = "some text";
+        // var renderer = vdom.normalRenderer(baseNode, view);
+        // var updateView = renderer(enqueue, model);
 
-        function withNewModel(value) {
-            return function() {
-                model = value;
-                console.log("New model", model);
-                updateView(model);
-            };
-        }
+        // function withNewModel(value) {
+        //     return function() {
+        //         model = value;
+        //         console.log("New model", model);
+        //         updateView(model);
+        //     };
+        // }
 
-        setTimeout(withNewModel("First text"), 1000);
-        setTimeout(withNewModel("Second text"), 3000);
-        setTimeout(withNewModel("Third text"), 5000);
-        console.log("Called it all");
+        // setTimeout(withNewModel("First text"), 1000);
+        // setTimeout(withNewModel("Second text"), 3000);
+        // setTimeout(withNewModel("Third text"), 5000);
+        // console.log("Called it all");
     };
 };
