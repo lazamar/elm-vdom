@@ -5,6 +5,7 @@
   "author": "<lazaronijunior@gmail.com>",
   "license": "MIT",
   "scripts": {
-  	"build": "pulp build -O --to build/output.js"
+  	"build": "pulp build -O --to build/output.js",
+  	"watch": "pulp --watch build -O --to build/output.js"
   }
 }
