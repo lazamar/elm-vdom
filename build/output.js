@@ -1874,16 +1874,45 @@ var PS = {};
 
           program: program,
           programWithFlags: programWithFlags,
-          staticProgram: staticProgram
+          staticProgram: staticProgram,
+
+          // Extra exposition
+          normalRenderer: normalRenderer
       };
   })();
 
   var vdom = _elm_lang$virtual_dom$Native_VirtualDom;
 
+  // When the UI sends a message, that's the function it will call
+  function enqueue(msg) {
+      console.log("A Message was emmitted");
+      console.log(msg);
+  }
+
   exports.text = function(t) {
       return function() {
-          var v = vdom.text(t);
-          console.log(v);
+          var baseNode = document.querySelector(".test-element");
+          console.log(baseNode);
+          var view = function(m) {
+              return vdom.text(m);
+          };
+
+          var model = "some text";
+          var renderer = vdom.normalRenderer(baseNode, view);
+          var updateView = renderer(enqueue, model);
+
+          function withNewModel(value) {
+              return function() {
+                  model = value;
+                  console.log("New model", model);
+                  updateView(model);
+              };
+          }
+
+          setTimeout(withNewModel("First text"), 1000);
+          setTimeout(withNewModel("Second text"), 3000);
+          setTimeout(withNewModel("Third text"), 5000);
+          console.log("Called it all");
       };
   };
 })(PS["Elm.VirtualDom"] = PS["Elm.VirtualDom"] || {});
