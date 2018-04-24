@@ -12,19 +12,21 @@ import Elm.Json.Decode as Json
 import Elm.Native.Core as Core
 import Elm.VirtualDom (on, anything, renderOnce, node, text, DOM, Node, property)
 
+data Msg =
+	DoSomething | DoNothing
 main :: forall e. Eff (console :: CONSOLE , dom :: DOM | e) Unit
 main = do
 	let
-		initialModel = "Initial Model" 
+		initialModel = "Initial Mode" 
 		view m =
 			node 
 				"div" 
 				( property "id" (Json.string "greeting") 
-     			: on "click" (Json.succeed mempty)
+     			: on "click" (Json.succeed DoSomething)
      			: mempty
      			)
 				( text m : mempty )
 
-	renderOnce ( view :: String -> Node Unit) initialModel
+	renderOnce ( view :: String -> Node Msg) initialModel
 	anything (1 : 2 : mempty)	
   	log "Hello sucker!" 

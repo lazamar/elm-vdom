@@ -1732,7 +1732,11 @@ exports.staticProgram = vdom.staticProgram;
 // When the UI sends a message, that's the function it will call
 function enqueue(msg) {
     console.log("A Message was emmitted");
-    console.log(msg);
+    console.log(arguments);
+    return function(vv) {
+        console.log("Level 2");
+        console.log(vv);
+    };
 }
 
 exports.anything = function(v) {

@@ -388,6 +388,14 @@ window._elm_lang$core$Native_Json = (function() {
         return run(decoder, json);
     }
 
+    function _elm_lang$core$Result$Err(a) {
+        return { ctor: "Err", _0: a };
+    }
+
+    function _elm_lang$core$Result$Ok(a) {
+        return { ctor: "Ok", _0: a };
+    }
+
     function run(decoder, value) {
         var result = runHelp(decoder, value);
         return result.tag === "ok"
