@@ -1,5 +1,6 @@
 module Elm.Json.Decode
   ( Decoder
+  , succeed 
   ) where
 
   -- , string
@@ -420,17 +421,16 @@ type Decoder = Elm.Native.Json.Decoder
 -- -- FANCY PRIMITIVES
 
 
--- {-| Ignore the JSON and produce a certain Elm value.
+{-| Ignore the JSON and produce a certain Elm value.
 
---     decodeString (succeed 42) "true"    == Ok 42
---     decodeString (succeed 42) "[1,2,3]" == Ok 42
---     decodeString (succeed 42) "hello"   == Err ... -- this is not a valid JSON string
+    decodeString (succeed 42) "true"    == Ok 42
+    decodeString (succeed 42) "[1,2,3]" == Ok 42
+    decodeString (succeed 42) "hello"   == Err ... -- this is not a valid JSON string
 
--- This is handy when used with `oneOf` or `andThen`.
--- -}
--- succeed : a -> Decoder a
--- succeed =
---   Native.Json.succeed
+This is handy when used with `oneOf` or `andThen`.
+-}
+succeed :: forall a. a -> Decoder a
+succeed = Elm.Native.Json.succeed
 
 
 -- {-| Ignore the JSON and make the decoder fail. This is handy when used with

@@ -9,6 +9,7 @@ module Elm.VirtualDom
 	, attribute
 	, style
   , anything
+  , on
 	) where
 
 import Prelude

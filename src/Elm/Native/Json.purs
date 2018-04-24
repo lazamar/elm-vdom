@@ -30,7 +30,7 @@ foreign import encode :: Int -> Value -> String
 
 -- foreign import andThen ::
 -- foreign import fail ::
--- foreign import succeed ::
+foreign import succeed :: forall a. a -> Decoder a
 -- foreign import oneOf ::
 
 foreign import identity :: forall a. a -> Value
