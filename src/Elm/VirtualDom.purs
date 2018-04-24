@@ -14,6 +14,7 @@ module Elm.VirtualDom
 import Prelude
 import Control.Monad.Eff (Eff, kind Effect)
 import Elm.Json.Encode as Json
+import Elm.Json.Decode as Json
 import Data.List (List)
 import Data.Tuple (Tuple)
 
@@ -200,55 +201,53 @@ foreign import style :: forall msg. List (Tuple String String) -> Property msg
 -- -- EVENTS
 
 
--- {-| Create a custom event listener.
+{-| Create a custom event listener.
 
---     import Json.Decode as Json
+    import Json.Decode as Json
 
---     onClick : msg -> Property msg
---     onClick msg =
---       on "click" (Json.succeed msg)
+    onClick : msg -> Property msg
+    onClick msg =
+      on "click" (Json.succeed msg)
 
--- You first specify the name of the event in the same format as with JavaScript’s
--- `addEventListener`. Next you give a JSON decoder, which lets you pull
--- information out of the event object. If the decoder succeeds, it will produce
--- a message and route it to your `update` function.
--- -}
--- on : String -> Json.Decoder msg -> Property msg
--- on eventName decoder =
---   onWithOptions eventName defaultOptions decoder
-
-
--- {-| Same as `on` but you can set a few options.
--- -}
--- onWithOptions : String -> Options -> Json.Decoder msg -> Property msg
--- onWithOptions =
---   Native.VirtualDom.on
+You first specify the name of the event in the same format as with JavaScript’s
+`addEventListener`. Next you give a JSON decoder, which lets you pull
+information out of the event object. If the decoder succeeds, it will produce
+a message and route it to your `update` function.
+-}
+on :: forall msg. String -> Json.Decoder msg -> Property msg
+on eventName decoder =
+  onWithOptions eventName defaultOptions decoder
 
 
--- {-| Options for an event listener. If `stopPropagation` is true, it means the
--- event stops traveling through the DOM so it will not trigger any other event
--- listeners. If `preventDefault` is true, any built-in browser behavior related
--- to the event is prevented. For example, this is used with touch events when you
--- want to treat them as gestures of your own, not as scrolls.
--- -}
--- type alias Options =
---   { stopPropagation : Bool
---   , preventDefault : Bool
---   }
+{-| Same as `on` but you can set a few options.
+-}
+foreign import onWithOptions :: forall msg. String -> Options -> Json.Decoder msg -> Property msg
 
 
--- {-| Everything is `False` by default.
+{-| Options for an event listener. If `stopPropagation` is true, it means the
+event stops traveling through the DOM so it will not trigger any other event
+listeners. If `preventDefault` is true, any built-in browser behavior related
+to the event is prevented. For example, this is used with touch events when you
+want to treat them as gestures of your own, not as scrolls.
+-}
+type Options =
+  { stopPropagation :: Boolean
+  , preventDefault :: Boolean
+  }
 
---     defaultOptions =
---         { stopPropagation = False
---         , preventDefault = False
---         }
--- -}
--- defaultOptions : Options
--- defaultOptions =
---   { stopPropagation = False
---   , preventDefault = False
---   }
+
+{-| Everything is `False` by default.
+
+    defaultOptions =
+        { stopPropagation = False
+        , preventDefault = False
+        }
+-}
+defaultOptions :: Options
+defaultOptions =
+  { stopPropagation : false
+  , preventDefault : false
+  }
 
 
 

@@ -13,27 +13,11 @@ module Elm.Json.Encode
 
 import Data.List (List)
 import Data.Tuple (Tuple)
+import Elm.Native.Json as Elm.Native.Json
 
 {-| Library for turning Elm values into Json values.
-
-# Encoding
-@docs encode, Value
-
-# Primitives
-@docs string, int, float, bool, null
-
-# Arrays
-@docs list, array
-
-# Objects
-@docs object
 -}
-
-
-{-| Represents a JavaScript value.
--}
-data Value = Value
-
+type Value = Elm.Native.Json.Value
 
 {-| Convert a `Value` into a prettified string. The first argument specifies
 the amount of indentation in the resulting string.
@@ -53,41 +37,36 @@ the amount of indentation in the resulting string.
     --     "age": 42
     -- }
 -}
-foreign import encode :: Int -> Value -> String
-
-foreign import identity :: forall a. a -> Value
+encode :: Int -> Value -> String
+encode = Elm.Native.Json.encode
 
 {-|-}
 string :: String -> Value
-string = identity
+string = Elm.Native.Json.identity
 
 
 {-|-}
 int :: Int -> Value
-int = identity
+int = Elm.Native.Json.identity
 
 
 {-| Encode a Float. `Infinity` and `NaN` are encoded as `null`.
 -}
 float :: Number -> Value
-float = identity
+float = Elm.Native.Json.identity
 
 
 {-|-}
 bool :: Boolean -> Value
-bool = identity
-
-foreign import encodeNull :: Value
+bool = Elm.Native.Json.identity
 
 {-|-}
 null :: Value
-null = encodeNull
-
-foreign import encodeObject :: List (Tuple String Value) -> Value
+null = Elm.Native.Json.encodeNull
 
 {-|-}
 object :: List (Tuple String Value) -> Value
-object = encodeObject
+object = Elm.Native.Json.encodeObject
 
 -- {-|-}
 -- array :: Array Value -> Value

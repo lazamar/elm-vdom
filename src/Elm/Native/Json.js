@@ -5,6 +5,7 @@ function F(arity, fun, wrapper) {
     wrapper.f = fun;
     return wrapper;
 }
+
 function F2(fun) {
     return F(2, fun, function(a) {
         return function(b) {
@@ -117,6 +118,50 @@ function F9(fun) {
         };
     });
 }
+
+function A2(fun, a, b) {
+    return fun.a === 2 ? fun.f(a, b) : fun(a)(b);
+}
+function A3(fun, a, b, c) {
+    return fun.a === 3 ? fun.f(a, b, c) : fun(a)(b)(c);
+}
+function A4(fun, a, b, c, d) {
+    return fun.a === 4 ? fun.f(a, b, c, d) : fun(a)(b)(c)(d);
+}
+function A5(fun, a, b, c, d, e) {
+    return fun.a === 5 ? fun.f(a, b, c, d, e) : fun(a)(b)(c)(d)(e);
+}
+function A6(fun, a, b, c, d, e, f) {
+    return fun.a === 6 ? fun.f(a, b, c, d, e, f) : fun(a)(b)(c)(d)(e)(f);
+}
+function A7(fun, a, b, c, d, e, f, g) {
+    return fun.a === 7 ? fun.f(a, b, c, d, e, f, g) : fun(a)(b)(c)(d)(e)(f)(g);
+}
+function A8(fun, a, b, c, d, e, f, g, h) {
+    return fun.a === 8 ? fun.f(a, b, c, d, e, f, g, h) : fun(a)(b)(c)(d)(e)(f)(g)(h);
+}
+function A9(fun, a, b, c, d, e, f, g, h, i) {
+    return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
+}
+
+window._elm_lang$core$Native_Core = {
+    F2: F2,
+    F3: F3,
+    F4: F4,
+    F5: F5,
+    F6: F6,
+    F7: F7,
+    F8: F8,
+    F9: F9,
+    A2: A2,
+    A3: A3,
+    A4: A4,
+    A5: A5,
+    A6: A6,
+    A7: A7,
+    A8: A8,
+    A9: A9
+};
 
 window._elm_lang$core$Native_Json = (function() {
     // CORE DECODERS
@@ -621,7 +666,6 @@ window._elm_lang$core$Native_Json = (function() {
 
         identity: identity,
         encodeNull: null,
-        // These two will be out for now
         // encodeArray: _elm_lang$core$Native_Array.toJSArray,
         // encodeList: _elm_lang$core$Native_List.toArray,
         encodeObject: encodeObject,
@@ -630,7 +674,7 @@ window._elm_lang$core$Native_Json = (function() {
     };
 })();
 
-const json = window._elm_lang$core$Native_Json;
+var json = window._elm_lang$core$Native_Json;
 
 exports.encode = json.encode;
 exports.runOnString = json.runOnString;
@@ -660,8 +704,8 @@ exports.oneOf = json.oneOf;
 
 exports.identity = json.identity;
 exports.encodeNull = json.encodeNull;
-// exports.encodeArray = json.encodeArray;
-// exports.encodeList = json.encodeList;
+exports.encodeArray = json.encodeArray;
+exports.encodeList = json.encodeList;
 exports.encodeObject = json.encodeObject;
 
 exports.equality = json.equality;

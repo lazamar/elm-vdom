@@ -8,6 +8,7 @@ import Elm.Json.Encode as Json
 import Data.Monoid (mempty)
 import Data.Tuple (Tuple(Tuple))
 import Data.List ((:))
+import Elm.Native.Core as Core
 
 main :: forall e. Eff (console :: CONSOLE , dom :: DOM | e) Unit
 main = do

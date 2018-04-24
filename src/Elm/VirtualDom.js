@@ -9,147 +9,22 @@
 /* eslint-disable no-unused-vars, no-use-before-define, no-redeclare, complexity, max-len */
 // Compiler functions
 
-function F(arity, fun, wrapper) {
-    wrapper.a = arity;
-    wrapper.f = fun;
-    return wrapper;
-}
-function F2(fun) {
-    return F(2, fun, function(a) {
-        return function(b) {
-            return fun(a, b);
-        };
-    });
-}
-function F3(fun) {
-    return F(3, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return fun(a, b, c);
-            };
-        };
-    });
-}
-function F4(fun) {
-    return F(4, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return fun(a, b, c, d);
-                };
-            };
-        };
-    });
-}
-function F5(fun) {
-    return F(5, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return function(e) {
-                        return fun(a, b, c, d, e);
-                    };
-                };
-            };
-        };
-    });
-}
-function F6(fun) {
-    return F(6, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return function(e) {
-                        return function(f) {
-                            return fun(a, b, c, d, e, f);
-                        };
-                    };
-                };
-            };
-        };
-    });
-}
-function F7(fun) {
-    return F(7, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return function(e) {
-                        return function(f) {
-                            return function(g) {
-                                return fun(a, b, c, d, e, f, g);
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    });
-}
-function F8(fun) {
-    return F(8, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return function(e) {
-                        return function(f) {
-                            return function(g) {
-                                return function(h) {
-                                    return fun(a, b, c, d, e, f, g, h);
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    });
-}
-function F9(fun) {
-    return F(9, fun, function(a) {
-        return function(b) {
-            return function(c) {
-                return function(d) {
-                    return function(e) {
-                        return function(f) {
-                            return function(g) {
-                                return function(h) {
-                                    return function(i) {
-                                        return fun(a, b, c, d, e, f, g, h, i);
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    });
-}
-function A2(fun, a, b) {
-    return fun.a === 2 ? fun.f(a, b) : fun(a)(b);
-}
-function A3(fun, a, b, c) {
-    return fun.a === 3 ? fun.f(a, b, c) : fun(a)(b)(c);
-}
-function A4(fun, a, b, c, d) {
-    return fun.a === 4 ? fun.f(a, b, c, d) : fun(a)(b)(c)(d);
-}
-function A5(fun, a, b, c, d, e) {
-    return fun.a === 5 ? fun.f(a, b, c, d, e) : fun(a)(b)(c)(d)(e);
-}
-function A6(fun, a, b, c, d, e, f) {
-    return fun.a === 6 ? fun.f(a, b, c, d, e, f) : fun(a)(b)(c)(d)(e)(f);
-}
-function A7(fun, a, b, c, d, e, f, g) {
-    return fun.a === 7 ? fun.f(a, b, c, d, e, f, g) : fun(a)(b)(c)(d)(e)(f)(g);
-}
-function A8(fun, a, b, c, d, e, f, g, h) {
-    return fun.a === 8 ? fun.f(a, b, c, d, e, f, g, h) : fun(a)(b)(c)(d)(e)(f)(g)(h);
-}
-function A9(fun, a, b, c, d, e, f, g, h, i) {
-    return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
-}
+var F2 = window._elm_lang$core$Native_Core.F2;
+var F3 = window._elm_lang$core$Native_Core.F3;
+var F4 = window._elm_lang$core$Native_Core.F4;
+var F5 = window._elm_lang$core$Native_Core.F5;
+var F6 = window._elm_lang$core$Native_Core.F6;
+var F7 = window._elm_lang$core$Native_Core.F7;
+var F8 = window._elm_lang$core$Native_Core.F8;
+var F9 = window._elm_lang$core$Native_Core.F9;
+var A2 = window._elm_lang$core$Native_Core.A2;
+var A3 = window._elm_lang$core$Native_Core.A3;
+var A4 = window._elm_lang$core$Native_Core.A4;
+var A5 = window._elm_lang$core$Native_Core.A5;
+var A6 = window._elm_lang$core$Native_Core.A6;
+var A7 = window._elm_lang$core$Native_Core.A7;
+var A8 = window._elm_lang$core$Native_Core.A8;
+var A9 = window._elm_lang$core$Native_Core.A9;
 
 // =============================================================
 // VIRTUAL DOM
@@ -1810,7 +1685,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         custom: custom,
         map: F2(map),
 
-        on: F3(on),
+        onWithOptions: F3(on),
         style: style,
         property: F2(property),
         attribute: F2(attribute),
@@ -1838,7 +1713,7 @@ exports.text = vdom.text;
 exports.custom = vdom.custom;
 exports.map = vdom.map;
 
-exports.on = vdom.on;
+exports.onWithOptions = vdom.onWithOptions;
 exports.style = vdom.style;
 exports.property = vdom.property;
 exports.attribute = vdom.attribute;
