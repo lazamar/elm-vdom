@@ -389,11 +389,11 @@ window._elm_lang$core$Native_Json = (function() {
     }
 
     function _elm_lang$core$Result$Err(a) {
-        return { ctor: "Err", _0: a };
+        return { ctor: "Err", value0: a };
     }
 
     function _elm_lang$core$Result$Ok(a) {
-        return { ctor: "Ok", _0: a };
+        return { ctor: "Ok", value0: a };
     }
 
     function run(decoder, value) {
@@ -540,7 +540,7 @@ window._elm_lang$core$Native_Json = (function() {
                 var errors = [];
                 var temp = decoder.decoders;
                 while (temp.ctor !== "[]") {
-                    var result = runHelp(temp._0, value);
+                    var result = runHelp(temp.value0, value);
 
                     if (result.tag === "ok") {
                         return result;
@@ -548,7 +548,7 @@ window._elm_lang$core$Native_Json = (function() {
 
                     errors.push(result);
 
-                    temp = temp._1;
+                    temp = temp.value1;
                 }
                 return badOneOf(errors);
 
@@ -638,9 +638,9 @@ window._elm_lang$core$Native_Json = (function() {
     function encodeObject(keyValuePairs) {
         var obj = {};
         while (keyValuePairs.ctor !== "[]") {
-            var pair = keyValuePairs._0;
-            obj[pair._0] = pair._1;
-            keyValuePairs = keyValuePairs._1;
+            var pair = keyValuePairs.value0;
+            obj[pair.value0] = pair.value1;
+            keyValuePairs = keyValuePairs.value1;
         }
         return obj;
     }

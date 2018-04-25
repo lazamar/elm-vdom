@@ -10,10 +10,11 @@ import Data.Tuple (Tuple(Tuple))
 import Elm.Json.Encode as Json
 import Elm.Json.Decode as Json
 import Elm.Native.Core as Core
-import Elm.VirtualDom (on, anything, renderOnce, node, text, DOM, Node, property)
+import Elm.VirtualDom (style, on, anything, renderOnce, node, text, DOM, Node, property)
 
 data Msg =
 	DoSomething | DoNothing
+
 main :: forall e. Eff (console :: CONSOLE , dom :: DOM | e) Unit
 main = do
 	let
@@ -23,10 +24,10 @@ main = do
 				"div" 
 				( property "id" (Json.string "greeting") 
      			: on "click" (Json.succeed DoSomething)
+     			: style (Tuple "color" "blue" : mempty)
      			: mempty
      			)
 				( text m : mempty )
 
 	renderOnce ( view :: String -> Node Msg) initialModel
-	anything (1 : 2 : mempty)	
   	log "Hello sucker!" 
