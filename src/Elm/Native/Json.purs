@@ -1,6 +1,7 @@
 module Elm.Native.Json where
 
 import Elm.Native.Core as Core
+import Elm.Native.Utils as Utils
 import Data.List (List)
 import Data.Tuple (Tuple)
 

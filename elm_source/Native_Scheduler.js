@@ -4,6 +4,7 @@
 /* eslint-disable no-unused-vars, no-use-before-define, no-redeclare, complexity, max-len */
 //import Native.Utils //
 
+// This is the main loop of the application.
 var _elm_lang$core$Native_Scheduler = (function() {
     var MAX_STEPS = 10000;
 

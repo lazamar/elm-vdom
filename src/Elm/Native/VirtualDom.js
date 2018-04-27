@@ -1728,19 +1728,7 @@ exports.keyedNode = vdom.keyedNode;
 exports.program = vdom.program;
 exports.programWithFlags = vdom.programWithFlags;
 exports.staticProgram = vdom.staticProgram;
-
-// When the UI sends a message, that's the function it will call
-function enqueue(msg) {
-    console.log("A Message was emmitted");
-    console.log(msg);
-}
-
-exports.anything = function(v) {
-    return function() {
-        console.log(v);
-        globalValue = v;
-    };
-};
+exports.normalRenderer = vdom.normalRenderer;
 
 exports.renderOnce = function(view) {
     return function(initialModel) {
@@ -1749,7 +1737,7 @@ exports.renderOnce = function(view) {
 
             var model = initialModel;
             var renderer = vdom.normalRenderer(baseNode, view);
-            var updateView = renderer(enqueue, model);
+            var updateView = renderer(function() {}, model);
 
             updateView(model);
         };

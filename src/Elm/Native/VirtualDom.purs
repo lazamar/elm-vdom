@@ -1,31 +1,41 @@
-module Elm.VirtualDom 
-	( DOM
-	, Node
-	, Property
-	, renderOnce
-	, text
-	, node
-	, property
-	, attribute
-	, style
-  , anything
+module Elm.Native.VirtualDom 
+  ( DOM
+  , Node
+  , Html
+  , Property
+  , Renderer
+  , normalRenderer
+  , text
+  , node
+  , property
+  , attribute
+  , style
   , on
-	) where
+  ) where
 
 import Prelude
+
 import Control.Monad.Eff (Eff, kind Effect)
-import Elm.Json.Encode as Json
-import Elm.Json.Decode as Json
 import Data.List (List)
 import Data.Tuple (Tuple)
+import Elm.Json.Decode as Json
+import Elm.Json.Encode as Json
+
 
 -- Define DOM effect type
 foreign import data DOM :: Effect
 
 -- type ViewFunc msg model = model -> Node msg
 
-foreign import renderOnce :: forall msg model a. (model -> Node msg) -> model -> Eff (dom :: DOM | a ) Unit
-foreign import anything :: forall a b. b -> Eff (dom :: DOM | a ) Unit
+foreign import renderOnce :: forall msg model a. 
+  (model -> Node msg) 
+  -> model 
+  -> Eff (dom :: DOM | a ) Unit
+
+
+data Renderer = Renderer
+
+foreign import normalRenderer :: Renderer
 
 -- module VirtualDom exposing
 --   ( Node
@@ -45,12 +55,13 @@ foreign import anything :: forall a b. b -> Eff (dom :: DOM | a ) Unit
 
 
 {-| An immutable chunk of data representing a DOM node.
-	This can be HTML or SVG.
+  This can be HTML or SVG.
 -}
 data Node msg = Node
+type Html msg = Node msg
 
 instance showNode :: Show (Node msg) where
-	show Node = "Node"
+  show Node = "Node"
 
 {-| Create a DOM node with a tag name, a list of HTML properties that can
 include styles and event listeners, a list of CSS properties like `color`, and
@@ -131,7 +142,7 @@ attribute can be used in HTML, but there is no corresponding property!
 data Property msg = Property
 
 instance showProperty :: Show (Property msg) where
-	show Property = "Property"
+  show Property = "Property"
 
 
 {-| Create arbitrary *properties*.

@@ -161,19 +161,5 @@ window._elm_lang$core$Native_Core = {
     A9: A9
 };
 
-exports.f2 = F2;
-exports.f3 = F3;
-exports.f4 = F4;
-exports.f5 = F5;
-exports.f6 = F6;
-exports.f7 = F7;
-exports.f8 = F8;
-exports.f9 = F9;
-exports.a2 = A2;
-exports.a3 = A3;
-exports.a4 = A4;
-exports.a5 = A5;
-exports.a6 = A6;
-exports.a7 = A7;
-exports.a8 = A8;
-exports.a9 = A9;
+// This is only here so that this JS file willbe executed
+exports.init = null;
