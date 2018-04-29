@@ -1,11 +1,11 @@
 module Elm.Native.Platform where
 
 import Prelude
-import Async (Async)
 import Elm.Native.Scheduler (Scheduler, scheduler)
 import Elm.Native.VirtualDom (DOM, Renderer, Html, normalRenderer)
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
+import Async (Async)
 import Data.List (List)
 
 type Cmd eff a = List (Async eff a)

@@ -2,8 +2,8 @@ module Main where
 
 import Prelude
 
-import Async (Async, toAsync)
 import Control.Monad.Eff (Eff, kind Effect)
+import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Data.List ((:))
 import Data.Monoid (mempty)
@@ -12,7 +12,8 @@ import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
 import Elm.Native.Platform (Cmd, program)
 import Elm.Native.VirtualDom (style, on, node, text, DOM, Html, property)
-import Data.Function ((#))
+import Network.HTTP.Affjax (get, AJAX)
+import Async (fromAff)
 
 main :: Eff Effs Unit
 main = 
@@ -28,9 +29,7 @@ type Model = String
 
 data Msg = Clicked | DoNothing | LogSomething
 
-type Effs = (console :: CONSOLE , dom :: DOM )
-
-
+type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX)
 
 update :: Msg -> Model -> Tuple Model (Cmd Effs Msg)
 update msg model =
@@ -41,18 +40,18 @@ update msg model =
 		LogSomething ->
 			Tuple 
 				model
-				(log "Logging something!"
-					# map (const DoNothing)
-					# toAsync
-					# flip (:) mempty
+				(pure $ do 
+					a <- fromAff $ get "http://google.com"
+					liftEff $ log "Logging something"	
+					liftEff $ logShow $ (\v -> v.response :: String) <$> a
+					pure DoNothing
 				)
 		Clicked ->
 			Tuple 
 				(model <> "and on") 
-				(log "Clicked!"
-					# map (const LogSomething)
-					# toAsync
-					# flip (:) mempty
+				(pure $ liftEff do
+					log "Clicked!"
+					pure LogSomething
 				)
 
 
