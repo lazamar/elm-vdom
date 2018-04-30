@@ -2,7 +2,7 @@ module Elm.Native.Platform where
 
 import Prelude
 import Elm.Native.Scheduler (Scheduler, scheduler)
-import Elm.Native.VirtualDom (DOM, Renderer, Html, normalRenderer)
+import Elm.Native.VirtualDom (DOM, Renderer, Node, normalRenderer)
 import Data.Tuple (Tuple(Tuple))
 import Control.Monad.Eff (Eff)
 import Async (Async)
@@ -17,13 +17,13 @@ foreign import programImpl :: forall msg model eff.
 	-> Renderer
 	-> model 														-- Initial Model
 	-> (msg -> model -> Tuple model (List (Async (dom :: DOM | eff) msg)))	-- update
-	-> (model -> Html msg) 											-- view
+	-> (model -> Node msg) 											-- view
 	-> Eff (dom :: DOM | eff) Unit
 
 program :: forall msg model eff.
 	model 															-- Initial Model
 	-> (msg -> model -> Tuple model (Cmd (dom :: DOM | eff) msg)) 	-- update
-	-> (model -> Html msg) 											-- view
+	-> (model -> Node msg) 											-- view
 	-> Eff (dom :: DOM | eff) Unit
 program model updateRaw view = 
 	let

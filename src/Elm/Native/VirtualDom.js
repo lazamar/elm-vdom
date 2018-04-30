@@ -1710,7 +1710,7 @@ var vdom = _elm_lang$virtual_dom$Native_VirtualDom;
 
 exports.node_ = vdom.node;
 exports.text = vdom.text;
-exports.custom = vdom.custom;
+// exports.custom = vdom.custom;
 exports.nodeMap = vdom.map;
 
 exports.onWithOptions = vdom.onWithOptions;
@@ -1723,11 +1723,11 @@ exports.mapProperty = vdom.mapProperty;
 exports.lazy = vdom.lazy;
 exports.lazy2 = vdom.lazy2;
 exports.lazy3 = vdom.lazy3;
-exports.keyedNode = vdom.keyedNode;
+exports.keyedNode_ = vdom.keyedNode;
 
-exports.program = vdom.program;
-exports.programWithFlags = vdom.programWithFlags;
-exports.staticProgram = vdom.staticProgram;
+// exports.program = vdom.program;
+// exports.programWithFlags = vdom.programWithFlags;
+// exports.staticProgram = vdom.staticProgram;
 exports.normalRenderer = vdom.normalRenderer;
 
 exports.renderOnce = function(view) {

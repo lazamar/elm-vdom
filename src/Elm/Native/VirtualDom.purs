@@ -1,26 +1,23 @@
 module Elm.Native.VirtualDom 
   ( DOM
   , Node
-  , Html
-  , Property
-  , Renderer
-  , normalRenderer
-  , text
-  , node
-  , property
-  , attribute
+  , Renderer, normalRenderer
+  , text, node
+  , Property, property, attribute, attributeNS
   , style
-  , on
+  , on, onWithOptions, Options, defaultOptions
+  , lazy, lazy2, lazy3
+  , keyedNode
   ) where
 
 import Prelude
 
 import Control.Monad.Eff (Eff, kind Effect)
+import Data.Functor (class Functor, map)
 import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple)
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
-import Data.Functor (class Functor, map)
 
 -- Define DOM effect type
 foreign import data DOM :: Effect
@@ -32,41 +29,43 @@ foreign import renderOnce :: forall msg model a.
   -> model 
   -> Eff (dom :: DOM | a ) Unit
 
-
+{-| A Renderer takes care of dom and virtual dom updates
+-}
 data Renderer = Renderer
 
 foreign import normalRenderer :: Renderer
 
--- module VirtualDom exposing
---   ( Node
---   , text, node
---   , Property, property, attribute, attributeNS, mapProperty
---   , style
---   , on, onWithOptions, Options, defaultOptions
---   , map
---   , lazy, lazy2, lazy3
---   , keyedNode
---   , program, programWithFlags
---   )
-
--- import Json.Decode as Json
--- import Native.VirtualDom
--- import VirtualDom.Debug as Debug
-
-
 {-| An immutable chunk of data representing a DOM node.
   This can be HTML or SVG.
 -}
-
 data Node msg = Node
 
+{-| This function is useful when nesting components with [the Elm
+Architecture](https://github.com/evancz/elm-architecture-tutorial/). It lets
+you transform the messages produced by a subtree.
+
+Say you have a node named `button` that produces `()` values when it is
+clicked. To get your model updating properly, you will probably want to tag
+this `()` value like this:
+
+    type Msg = Click | ...
+
+    update msg model =
+      case msg of
+        Click ->
+          ...
+
+    view model =
+      map (\_ -> Click) button
+
+So now all the events produced by `button` will be transformed to be of type
+`Msg` so they can be handled by your update function!
+-}
+foreign import nodeMap :: forall a msg. (a -> msg) -> Node a -> Node msg
 instance functorNode :: Functor Node where
-  map f n = nodeMap f n
+  map = nodeMap 
 
 type Html msg = Node msg
-
-instance showNode :: Show (Node msg) where
-  show Node = "Node"
 
 {-| Create a DOM node with a tag name, a list of HTML properties that can
 include styles and event listeners, a list of CSS properties like `color`, and
@@ -99,32 +98,6 @@ exactly as you specify.
 foreign import text :: forall msg. String -> Node msg
 
 
-
-{-| This function is useful when nesting components with [the Elm
-Architecture](https://github.com/evancz/elm-architecture-tutorial/). It lets
-you transform the messages produced by a subtree.
-
-Say you have a node named `button` that produces `()` values when it is
-clicked. To get your model updating properly, you will probably want to tag
-this `()` value like this:
-
-    type Msg = Click | ...
-
-    update msg model =
-      case msg of
-        Click ->
-          ...
-
-    view model =
-      map (\_ -> Click) button
-
-So now all the events produced by `button` will be transformed to be of type
-`Msg` so they can be handled by your update function!
--}
-foreign import nodeMap :: forall a msg. (a -> msg) -> Node a -> Node msg
-
-
-
 -- -- PROPERTIES
 
 
@@ -146,6 +119,14 @@ attribute can be used in HTML, but there is no corresponding property!
 -}
 
 data Property msg = Property
+
+{-| Transform the messages produced by a `Property`.
+-}
+foreign import mapProperty :: forall a b. (a -> b) -> Property a -> Property b
+
+instance functorProperty :: Functor Property where
+  map = mapProperty
+
 
 instance showProperty :: Show (Property msg) where
   show Property = "Property"
@@ -182,38 +163,30 @@ be in HTML, not `className` as it would appear in JS.
 foreign import attribute :: forall msg. String -> String -> Property msg
 
 
--- {-| Would you believe that there is another way to do this?! This corresponds
--- to JavaScript's `setAttributeNS` function under the hood. It is doing pretty
--- much the same thing as `attribute` but you are able to have "namespaced"
--- attributes. This is used in some SVG stuff at least.
--- -}
--- attributeNS : String -> String -> String -> Property msg
--- attributeNS =
---   Native.VirtualDom.attributeNS
+{-| Would you believe that there is another way to do this?! This corresponds
+to JavaScript's `setAttributeNS` function under the hood. It is doing pretty
+much the same thing as `attribute` but you are able to have "namespaced"
+attributes. This is used in some SVG stuff at least.
+-}
+foreign import attributeNS :: forall msg. String -> String -> String -> Property msg
 
 
--- {-| Transform the messages produced by a `Property`.
--- -}
--- mapProperty : (a -> b) -> Property a -> Property b
--- mapProperty =
---   Native.VirtualDom.mapProperty
 
 
--- | Specify a list of styles.
+{-| Specify a list of styles.
 
---     myStyle : Property msg
---     myStyle =
---       style
---         [ ("backgroundColor", "red")
---         , ("height", "90px")
---         , ("width", "100%")
---         ]
+    myStyle : Property msg
+    myStyle =
+      style
+        [ ("backgroundColor", "red")
+        , ("height", "90px")
+        , ("width", "100%")
+        ]
 
---     greeting : Node msg
---     greeting =
---       node "div" [ myStyle ] [ text "Hello!" ]
-
-
+    greeting : Node msg
+    greeting =
+      node "div" [ myStyle ] [ text "Hello!" ]
+-}
 foreign import style_ :: forall msg. List (Tuple String String) -> Property msg
 
 style :: forall msg. Array (Tuple String String) -> Property msg
@@ -275,74 +248,36 @@ defaultOptions =
 -- -- OPTIMIZATION
 
 
--- {-| A performance optimization that delays the building of virtual DOM nodes.
+{-| A performance optimization that delays the building of virtual DOM nodes.
 
--- Calling `(view model)` will definitely build some virtual DOM, perhaps a lot of
--- it. Calling `(lazy view model)` delays the call until later. During diffing, we
--- can check to see if `model` is referentially equal to the previous value used,
--- and if so, we just stop. No need to build up the tree structure and diff it,
--- we know if the input to `view` is the same, the output must be the same!
--- -}
--- lazy : (a -> Node msg) -> a -> Node msg
--- lazy =
---   Native.VirtualDom.lazy
+Calling `(view model)` will definitely build some virtual DOM, perhaps a lot of
+it. Calling `(lazy view model)` delays the call until later. During diffing, we
+can check to see if `model` is referentially equal to the previous value used,
+and if so, we just stop. No need to build up the tree structure and diff it,
+we know if the input to `view` is the same, the output must be the same!
+-}
+foreign import lazy :: forall a msg. (a -> Node msg) -> a -> Node msg
 
 
--- {-| Same as `lazy` but checks on two arguments.
--- -}
--- lazy2 : (a -> b -> Node msg) -> a -> b -> Node msg
--- lazy2 =
---   Native.VirtualDom.lazy2
+{-| Same as `lazy` but checks on two arguments.
+-}
+foreign import lazy2 :: forall a b msg. (a -> b -> Node msg) -> a -> b -> Node msg
 
 
--- {-| Same as `lazy` but checks on three arguments.
--- -}
--- lazy3 : (a -> b -> c -> Node msg) -> a -> b -> c -> Node msg
--- lazy3 =
---   Native.VirtualDom.lazy3
+{-| Same as `lazy` but checks on three arguments.
+-}
+foreign import lazy3 :: forall a b c msg. (a -> b -> c -> Node msg) -> a -> b -> c -> Node msg
 
 
--- {-| Works just like `node`, but you add a unique identifier to each child
--- node. You want this when you have a list of nodes that is changing: adding
--- nodes, removing nodes, etc. In these cases, the unique identifiers help make
--- the DOM modifications more efficient.
--- -}
--- keyedNode : String -> Array (Property msg) -> Array ( String, Node msg ) -> Node msg
--- keyedNode =
---   Native.VirtualDom.keyedNode
+{-| Works just like `node`, but you add a unique identifier to each child
+node. You want this when you have a list of nodes that is changing: adding
+nodes, removing nodes, etc. In these cases, the unique identifiers help make
+the DOM modifications more efficient.
+-}
+foreign import keyedNode_ :: forall msg. String -> List (Property msg) -> List ( Tuple String (Node msg) ) -> Node msg
+
+keyedNode :: forall msg. String -> Array (Property msg) -> Array ( Tuple String (Node msg) ) -> Node msg
+keyedNode s p n = 
+  keyedNode_ s (fromFoldable p) (fromFoldable n)
 
 
-
--- -- PROGRAMS
-
-
--- {-| Check out the docs for [`Html.App.program`][prog].
--- It works exactly the same way.
-
--- [prog]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-App#program
--- -}
--- program
---   : { init : (model, Cmd msg)
---     , update : msg -> model -> (model, Cmd msg)
---     , subscriptions : model -> Sub msg
---     , view : model -> Node msg
---     }
---   -> Program Never model msg
--- program impl =
---   Native.VirtualDom.program Debug.wrap impl
-
-
--- {-| Check out the docs for [`Html.App.programWithFlags`][prog].
--- It works exactly the same way.
-
--- [prog]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html-App#programWithFlags
--- -}
--- programWithFlags
---   : { init : flags -> (model, Cmd msg)
---     , update : msg -> model -> (model, Cmd msg)
---     , subscriptions : model -> Sub msg
---     , view : model -> Node msg
---     }
---   -> Program flags model msg
--- programWithFlags impl =
---   Native.VirtualDom.programWithFlags Debug.wrapWithFlags impl

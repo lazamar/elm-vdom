@@ -11,7 +11,7 @@ import Data.Tuple (Tuple(Tuple))
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
 import Elm.Native.Platform (Cmd, program, (!))
-import Elm.Native.VirtualDom (style, on, node, text, DOM, Html, property)
+import Elm.Native.VirtualDom (style, on, node, text, DOM, Node, property)
 import Network.HTTP.Affjax (get, AJAX)
 import Async (fromAff, makeAsync)
 
@@ -63,7 +63,7 @@ update msg model =
 
 
 
-view :: Model -> Html Msg
+view :: Model -> Node Msg
 view model =
 	map (const LogSomething) $
 	node 
