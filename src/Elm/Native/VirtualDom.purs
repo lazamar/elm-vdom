@@ -20,7 +20,7 @@ import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple)
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
-
+import Data.Functor (class Functor, map)
 
 -- Define DOM effect type
 foreign import data DOM :: Effect
@@ -57,7 +57,12 @@ foreign import normalRenderer :: Renderer
 {-| An immutable chunk of data representing a DOM node.
   This can be HTML or SVG.
 -}
+
 data Node msg = Node
+
+instance functorNode :: Functor Node where
+  map f n = nodeMap f n
+
 type Html msg = Node msg
 
 instance showNode :: Show (Node msg) where
@@ -95,30 +100,28 @@ foreign import text :: forall msg. String -> Node msg
 
 
 
--- {-| This function is useful when nesting components with [the Elm
--- Architecture](https://github.com/evancz/elm-architecture-tutorial/). It lets
--- you transform the messages produced by a subtree.
+{-| This function is useful when nesting components with [the Elm
+Architecture](https://github.com/evancz/elm-architecture-tutorial/). It lets
+you transform the messages produced by a subtree.
 
--- Say you have a node named `button` that produces `()` values when it is
--- clicked. To get your model updating properly, you will probably want to tag
--- this `()` value like this:
+Say you have a node named `button` that produces `()` values when it is
+clicked. To get your model updating properly, you will probably want to tag
+this `()` value like this:
 
---     type Msg = Click | ...
+    type Msg = Click | ...
 
---     update msg model =
---       case msg of
---         Click ->
---           ...
+    update msg model =
+      case msg of
+        Click ->
+          ...
 
---     view model =
---       map (\_ -> Click) button
+    view model =
+      map (\_ -> Click) button
 
--- So now all the events produced by `button` will be transformed to be of type
--- `Msg` so they can be handled by your update function!
--- -}
--- map : (a -> msg) -> Node a -> Node msg
--- map =
---   Native.VirtualDom.map
+So now all the events produced by `button` will be transformed to be of type
+`Msg` so they can be handled by your update function!
+-}
+foreign import nodeMap :: forall a msg. (a -> msg) -> Node a -> Node msg
 
 
 

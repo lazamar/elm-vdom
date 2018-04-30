@@ -65,10 +65,11 @@ update msg model =
 
 view :: Model -> Html Msg
 view model =
+	map (const LogSomething) $
 	node 
 		"div" 
 		[ property "id" (Json.string "greeting") 
 		, on "click" (Json.succeed Clicked)
-		, style [ Tuple "color" "blue" ]
+		, style [ ("color" ! "blue") ]
 		]
 		[  text model ]

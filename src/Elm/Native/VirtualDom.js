@@ -1711,7 +1711,7 @@ var vdom = _elm_lang$virtual_dom$Native_VirtualDom;
 exports.node_ = vdom.node;
 exports.text = vdom.text;
 exports.custom = vdom.custom;
-exports.map = vdom.map;
+exports.nodeMap = vdom.map;
 
 exports.onWithOptions = vdom.onWithOptions;
 exports.style_ = vdom.style;
