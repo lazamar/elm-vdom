@@ -16,7 +16,7 @@ module Elm.Native.VirtualDom
 import Prelude
 
 import Control.Monad.Eff (Eff, kind Effect)
-import Data.List (List)
+import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple)
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
@@ -79,8 +79,11 @@ a list of child nodes.
         [ property "id" (Json.string "greeting") ]
         [ text "Hello!" ]
 -}
-foreign import node :: forall msg. String -> List (Property msg) -> List (Node msg) -> Node msg
+foreign import node_ :: forall msg. String -> List (Property msg) -> List (Node msg) -> Node msg
 
+node :: forall msg. String -> Array (Property msg) -> Array (Node msg) -> Node msg
+node s p c =
+  node_ s (fromFoldable p) (fromFoldable c)
 
 {-| Just put plain text in the DOM. It will escape the string so that it appears
 exactly as you specify.
@@ -208,7 +211,10 @@ foreign import attribute :: forall msg. String -> String -> Property msg
 --       node "div" [ myStyle ] [ text "Hello!" ]
 
 
-foreign import style :: forall msg. List (Tuple String String) -> Property msg
+foreign import style_ :: forall msg. List (Tuple String String) -> Property msg
+
+style :: forall msg. Array (Tuple String String) -> Property msg
+style a = style_ $ fromFoldable a
 
 -- -- EVENTS
 
@@ -298,7 +304,7 @@ defaultOptions =
 -- nodes, removing nodes, etc. In these cases, the unique identifiers help make
 -- the DOM modifications more efficient.
 -- -}
--- keyedNode : String -> List (Property msg) -> List ( String, Node msg ) -> Node msg
+-- keyedNode : String -> Array (Property msg) -> Array ( String, Node msg ) -> Node msg
 -- keyedNode =
 --   Native.VirtualDom.keyedNode
 

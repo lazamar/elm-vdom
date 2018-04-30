@@ -1708,13 +1708,13 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
 var vdom = _elm_lang$virtual_dom$Native_VirtualDom;
 
-exports.node = vdom.node;
+exports.node_ = vdom.node;
 exports.text = vdom.text;
 exports.custom = vdom.custom;
 exports.map = vdom.map;
 
 exports.onWithOptions = vdom.onWithOptions;
-exports.style = vdom.style;
+exports.style_ = vdom.style;
 exports.property = vdom.property;
 exports.attribute = vdom.attribute;
 exports.attributeNS = vdom.attributeNS;

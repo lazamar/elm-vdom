@@ -10,10 +10,10 @@ import Data.Monoid (mempty)
 import Data.Tuple (Tuple(Tuple))
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
-import Elm.Native.Platform (Cmd, program)
+import Elm.Native.Platform (Cmd, program, (!))
 import Elm.Native.VirtualDom (style, on, node, text, DOM, Html, property)
 import Network.HTTP.Affjax (get, AJAX)
-import Async (fromAff)
+import Async (fromAff, makeAsync)
 
 main :: Eff Effs Unit
 main = 
@@ -27,9 +27,14 @@ main =
 
 type Model = String
 
-data Msg = Clicked | DoNothing | LogSomething
+data Msg = Clicked | DoNothing | LogSomething | LogNumber Int
 
 type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX)
+
+
+-- Subscription
+
+foreign import repeat :: (Int -> Eff Effs Unit) -> Eff Effs Unit
 
 update :: Msg -> Model -> Tuple Model (Cmd Effs Msg)
 update msg model =
@@ -38,21 +43,23 @@ update msg model =
 			Tuple model mempty
 
 		LogSomething ->
-			Tuple 
-				model
-				(pure $ do 
+			model !
+				[do 
 					a <- fromAff $ get "http://google.com"
 					liftEff $ log "Logging something"	
 					liftEff $ logShow $ (\v -> v.response :: String) <$> a
 					pure DoNothing
-				)
+				]
 		Clicked ->
-			Tuple 
-				(model <> "and on") 
-				(pure $ liftEff do
-					log "Clicked!"
-					pure LogSomething
-				)
+				(model <> "and on") !
+				[ do
+					liftEff $ log "Clicked!"
+					num <- makeAsync repeat
+					pure $ LogNumber num
+				]
+
+		LogNumber n ->
+			model ! [ liftEff $ map (const DoNothing ) $ logShow n]
 
 
 
@@ -60,9 +67,8 @@ view :: Model -> Html Msg
 view model =
 	node 
 		"div" 
-		( property "id" (Json.string "greeting") 
-			: on "click" (Json.succeed Clicked)
-			: style (Tuple "color" "blue" : mempty)
-			: mempty
-			)
-		( text model : mempty )
+		[ property "id" (Json.string "greeting") 
+		, on "click" (Json.succeed Clicked)
+		, style [ Tuple "color" "blue" ]
+		]
+		[  text model ]
