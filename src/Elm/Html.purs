@@ -115,8 +115,6 @@ type Html msg = VirtualDom.Node msg
 -}
 type Attribute msg = VirtualDom.Property msg
 
-
-
 -- PRIMITIVES
 
 

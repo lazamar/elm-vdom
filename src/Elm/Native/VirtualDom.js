@@ -1860,7 +1860,7 @@ exports.text = vdom.text;
 exports.nodeMap = vdom.map;
 
 exports.onWithOptions = vdom.onWithOptions;
-exports.style_ = vdom.style;
+exports.style = vdom.style;
 exports.property = vdom.property;
 exports.attribute = vdom.attribute;
 exports.attributeNS = vdom.attributeNS;

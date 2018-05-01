@@ -127,11 +127,6 @@ foreign import mapProperty :: forall a b. (a -> b) -> Property a -> Property b
 instance functorProperty :: Functor Property where
   map = mapProperty
 
-
-instance showProperty :: Show (Property msg) where
-  show Property = "Property"
-
-
 {-| Create arbitrary *properties*.
 
     import JavaScript.Encode as Json
@@ -187,10 +182,7 @@ foreign import attributeNS :: forall msg. String -> String -> String -> Property
     greeting =
       node "div" [ myStyle ] [ text "Hello!" ]
 -}
-foreign import style_ :: forall msg. List (Tuple String String) -> Property msg
-
-style :: forall msg. Array (Tuple String String) -> Property msg
-style a = style_ $ fromFoldable a
+foreign import style :: forall msg. List (Tuple String String) -> Property msg
 
 -- -- EVENTS
 
