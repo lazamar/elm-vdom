@@ -1,6 +1,6 @@
 
 module Elm.Html
-  ( Html, Attribute
+  ( DOM, Html, Attribute
   , text, node
   , beginnerProgram, program
   , h1, h2, h3, h4, h5, h6
@@ -87,17 +87,18 @@ expect to use frequently will be closer to the top.
 
 import Prelude
 import Elm.Native.VirtualDom as VirtualDom 
-import Elm.Native.VirtualDom (DOM, normalRenderer) 
 import Elm.Native.Scheduler (scheduler)
 import Elm.Native.Platform ((!))
 import Elm.Native.Platform as Platform
-import Data.Tuple (Tuple(Tuple))
+import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
 import Async (Async)
 import Data.Monoid (mempty)
 
+
 -- CORE TYPES
 
+type DOM = VirtualDom.DOM
 
 {-| The core building block used to build up HTML. Here we create an `Html`
 value with no attributes and one child:: forall msg.
@@ -194,7 +195,7 @@ program ::
 program { init: init, update: update, view: view } =
 	Platform.program
 		scheduler
-		normalRenderer
+		VirtualDom.normalRenderer
 		init
 		update
 		view
@@ -705,6 +706,7 @@ track =
 
 
 {-| Represents a bitmap area for graphics rendering. -}
+
 canvas :: forall msg. Array (Attribute msg) -> Array (Html msg) -> Html msg
 canvas =
   node "canvas"
