@@ -92,7 +92,7 @@ import Elm.Native.Platform ((!))
 import Elm.Native.Platform as Platform
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
-import Async (Async)
+import Elm.Async (Async)
 import Data.Monoid (mempty)
 
 

@@ -5,7 +5,7 @@ import Elm.Native.Scheduler (Scheduler)
 import Elm.Native.VirtualDom (DOM, Renderer, Node)
 import Data.Tuple (Tuple(Tuple))
 import Control.Monad.Eff (Eff)
-import Async (Async)
+import Elm.Async (Async)
 
 infixr 0 Tuple as !
 

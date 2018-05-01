@@ -1,12 +1,13 @@
-module Async where
+module Elm.Async where
 
 import Prelude
 
 import Control.Monad.Cont.Trans (ContT(ContT))
 import Control.Monad.Eff (Eff, kind Effect)
-import Control.Monad.Aff (Aff, runAff_)
 import Control.Monad.Eff.Exception (Error)
+import Control.Monad.Aff (Aff, runAff_)
 import Data.Either (Either)
+
 
 type Async a b = ContT Unit (Eff a) b
 

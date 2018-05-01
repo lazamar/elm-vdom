@@ -2,24 +2,24 @@ module Main where
 
 import Prelude
 
-import Async (Async, fromAff, makeAsync)
 import Control.Monad.Eff (Eff, kind Effect)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
+import Control.Monad.Aff (Aff)
+import Control.Monad.Aff.Class (liftAff)
+import Data.Either (Either (Left, Right))
 import Data.List ((:))
 import Data.Monoid (mempty)
 import Data.Tuple (Tuple(Tuple))
-import Elm.Html (program)
-import Elm.Json.Decode as Json
-import Elm.Json.Encode as Json
-import Elm.Native.Platform ((!))
-import Network.HTTP.Affjax (get, AJAX)
+import Network.HTTP.Affjax (get, AJAX, Affjax)
 
-import Elm.Html (DOM, Html, text, div)
+import Elm.Html (DOM, program, Html, text, div)
 import Elm.Html.Attributes (style, id)
 import Elm.Html.Events (onClick)
+import Elm.Operators ((!))
+import Elm.Async (Async, makeAsync, fromAff)
 
-main :: Eff Effs Unit
+main :: forall a. Eff ( Effs a ) Unit
 main = program
 	{ init : init 
 	, update : update
@@ -30,18 +30,18 @@ type Model = String
 
 data Msg = Clicked | DoNothing | LogSomething | LogNumber Int
 
-type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX)
+type Effs a = (console :: CONSOLE , dom :: DOM, ajax :: AJAX | a)
 
 
 -- Subscription
 
-foreign import repeat :: (Int -> Eff Effs Unit) -> Eff Effs Unit
+foreign import repeat :: forall a. (Int -> Eff ( Effs a ) Unit) -> Eff ( Effs a ) Unit
 
-init :: Tuple Model (Array (Async Effs Msg))
+init :: forall a. Tuple Model (Array (Async ( Effs a ) Msg))
 init = "This goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
 
 
-update :: Msg -> Model -> Tuple Model (Array (Async Effs Msg))
+update :: forall a. Msg -> Model -> Tuple Model (Array (Async ( Effs a ) Msg))
 update msg model =
 	case msg of
 		DoNothing ->
@@ -50,9 +50,9 @@ update msg model =
 		LogSomething ->
 			model !
 				[do 
-					a <- fromAff $ get "http://google.com"
+					t <- fromAff getGoogleText 
 					liftEff $ log "Logging something"	
-					liftEff $ logShow $ (\v -> v.response :: String) <$> a
+					liftEff $ logShow t
 					pure DoNothing
 				]
 		Clicked ->
@@ -67,6 +67,10 @@ update msg model =
 			model ! [ liftEff $ map (const DoNothing ) $ logShow n ]
 
 
+getGoogleText :: forall t3. Aff  ( ajax :: AJAX | t3 ) String
+getGoogleText = do
+	r <- get "http://google.com"
+	pure r.response
 
 view :: Model -> Html Msg
 view model =
