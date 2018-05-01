@@ -1,6 +1,12 @@
 module Elm.Json.Decode
   ( Decoder
   , succeed 
+  , field
+  , at
+  , string
+  , bool
+  , int
+  , float
   ) where
 
   -- , string
@@ -14,9 +20,10 @@ module Elm.Json.Decode
   -- , map, map2, map3, map4, map5, map6, map7, map8
   -- , lazy, value, null, succeed, fail, andThen
 
+import Data.Foldable (foldr)
+import Elm.Json.Encode (string)
 import Elm.Native.Json as Elm.Native.Json
 
-type Decoder = Elm.Native.Json.Decoder
 -- {-| Turn JSON values into Elm values. Definitely check out this [intro to
 -- JSON decoders][guide] to get a feel for how this library works!
 
@@ -65,62 +72,60 @@ type Decoder = Elm.Native.Json.Decoder
 -- -- PRIMITIVES
 
 
--- {-| A value that knows how to decode JSON values.
--- -}
--- data Decoder a = Decoder
+{-| A value that knows how to decode JSON values.
+-}
+type Decoder = Elm.Native.Json.Decoder
 
--- foreign import 
+{-| Decode a JSON string into an Elm `String`.
 
--- {-| Decode a JSON string into an Elm `String`.
-
---     decodeString string "true"              == Err ...
---     decodeString string "42"                == Err ...
---     decodeString string "3.14"              == Err ...
---     decodeString string "\"hello\""         == Ok "hello"
---     decodeString string "{ \"hello\": 42 }" == Err ...
--- -}
--- string : Decoder String
--- string =
---   Native.Json.decodePrimitive "string"
+    decodeString string "true"              == Err ...
+    decodeString string "42"                == Err ...
+    decodeString string "3.14"              == Err ...
+    decodeString string "\"hello\""         == Ok "hello"
+    decodeString string "{ \"hello\": 42 }" == Err ...
+-}
+string :: Decoder String
+string =
+  Elm.Native.Json.decodePrimitive "string"
 
 
--- {-| Decode a JSON boolean into an Elm `Bool`.
+{-| Decode a JSON boolean into an Elm `Bool`.
 
---     decodeString bool "true"              == Ok True
---     decodeString bool "42"                == Err ...
---     decodeString bool "3.14"              == Err ...
---     decodeString bool "\"hello\""         == Err ...
---     decodeString bool "{ \"hello\": 42 }" == Err ...
--- -}
--- bool : Decoder Bool
--- bool =
---   Native.Json.decodePrimitive "bool"
-
-
--- {-| Decode a JSON number into an Elm `Int`.
-
---     decodeString int "true"              == Err ...
---     decodeString int "42"                == Ok 42
---     decodeString int "3.14"              == Err ...
---     decodeString int "\"hello\""         == Err ...
---     decodeString int "{ \"hello\": 42 }" == Err ...
--- -}
--- int : Decoder Int
--- int =
---   Native.Json.decodePrimitive "int"
+    decodeString bool "true"              == Ok True
+    decodeString bool "42"                == Err ...
+    decodeString bool "3.14"              == Err ...
+    decodeString bool "\"hello\""         == Err ...
+    decodeString bool "{ \"hello\": 42 }" == Err ...
+-}
+bool :: Decoder Boolean
+bool =
+  Elm.Native.Json.decodePrimitive "bool"
 
 
--- {-| Decode a JSON number into an Elm `Float`.
+{-| Decode a JSON number into an Elm `Int`.
 
---     decodeString float "true"              == Err ..
---     decodeString float "42"                == Ok 42
---     decodeString float "3.14"              == Ok 3.14
---     decodeString float "\"hello\""         == Err ...
---     decodeString float "{ \"hello\": 42 }" == Err ...
--- -}
--- float : Decoder Float
--- float =
---   Native.Json.decodePrimitive "float"
+    decodeString int "true"              == Err ...
+    decodeString int "42"                == Ok 42
+    decodeString int "3.14"              == Err ...
+    decodeString int "\"hello\""         == Err ...
+    decodeString int "{ \"hello\": 42 }" == Err ...
+-}
+int :: Decoder Int
+int =
+  Elm.Native.Json.decodePrimitive "int"
+
+
+{-| Decode a JSON number into an Elm `Float`.
+
+    decodeString float "true"              == Err ..
+    decodeString float "42"                == Ok 42
+    decodeString float "3.14"              == Ok 3.14
+    decodeString float "\"hello\""         == Err ...
+    decodeString float "{ \"hello\": 42 }" == Err ...
+-}
+float :: Decoder Number
+float =
+  Elm.Native.Json.decodePrimitive "float"
 
 
 
@@ -186,39 +191,39 @@ type Decoder = Elm.Native.Json.Decoder
 -- -- OBJECT PRIMITIVES
 
 
--- {-| Decode a JSON object, requiring a particular field.
+{-| Decode a JSON object, requiring a particular field.
 
---     decodeString (field "x" int) "{ \"x\": 3 }"            == Ok 3
---     decodeString (field "x" int) "{ \"x\": 3, \"y\": 4 }"  == Ok 3
---     decodeString (field "x" int) "{ \"x\": true }"         == Err ...
---     decodeString (field "x" int) "{ \"y\": 4 }"            == Err ...
+    decodeString (field "x" int) "{ \"x\": 3 }"            == Ok 3
+    decodeString (field "x" int) "{ \"x\": 3, \"y\": 4 }"  == Ok 3
+    decodeString (field "x" int) "{ \"x\": true }"         == Err ...
+    decodeString (field "x" int) "{ \"y\": 4 }"            == Err ...
 
---     decodeString (field "name" string) "{ \"name\": \"tom\" }" == Ok "tom"
+    decodeString (field "name" string) "{ \"name\": \"tom\" }" == Ok "tom"
 
--- The object *can* have other fields. Lots of them! The only thing this decoder
--- cares about is if `x` is present and that the value there is an `Int`.
+The object *can* have other fields. Lots of them! The only thing this decoder
+cares about is if `x` is present and that the value there is an `Int`.
 
--- Check out [`map2`](#map2) to see how to decode multiple fields!
--- -}
--- field : String -> Decoder a -> Decoder a
--- field =
---     Native.Json.decodeField
+Check out [`map2`](#map2) to see how to decode multiple fields!
+-}
+field :: forall a. String -> Decoder a -> Decoder a
+field =
+    Elm.Native.Json.decodeField
 
 
--- {-| Decode a nested JSON object, requiring certain fields.
+{-| Decode a nested JSON object, requiring certain fields.
 
---     json = """{ "person": { "name": "tom", "age": 42 } }"""
+    json = """{ "person": { "name": "tom", "age": 42 } }"""
 
---     decodeString (at ["person", "name"] string) json  == Ok "tom"
---     decodeString (at ["person", "age" ] int   ) json  == Ok "42
+    decodeString (at ["person", "name"] string) json  == Ok "tom"
+    decodeString (at ["person", "age" ] int   ) json  == Ok "42
 
--- This is really just a shorthand for saying things like:
+This is really just a shorthand for saying things like:
 
---     field "person" (field "name" string) == at ["person","name"] string
--- -}
--- at : List String -> Decoder a -> Decoder a
--- at fields decoder =
---     List.foldr field decoder fields
+    field "person" (field "name" string) == at ["person","name"] string
+-}
+at :: forall a. Array String -> Decoder a -> Decoder a
+at fields decoder =
+    foldr field decoder fields
 
 
 -- {-| Decode a JSON array, requiring a particular index.

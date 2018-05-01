@@ -13,11 +13,11 @@ import Elm.Html (program)
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
 import Elm.Native.Platform ((!))
-import Elm.Native.VirtualDom (on)
 import Network.HTTP.Affjax (get, AJAX)
 
 import Elm.Html (DOM, Html, text, div)
 import Elm.Html.Attributes (style, id)
+import Elm.Html.Events (onClick)
 
 main :: Eff Effs Unit
 main = program
@@ -73,7 +73,7 @@ view model =
 	map (const LogSomething) $
 	div 
 		[ id "greeting"
-		, on "click" (Json.succeed Clicked)
+		, onClick Clicked
 		, style [ ("color" ! "blue") ]
 		]
 		[  text model ]
