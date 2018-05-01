@@ -15,19 +15,22 @@ function F5(fn) {
 }
 
 function dispatchCmds(cmds, enqueue) {
-    var cmd = cmds;
-    while (cmd.value0) {
-        cmd.value0(enqueue)();
-        cmd = cmd.value1;
+    var i;
+    var length = cmds.length;
+    for (i = 0; i < length; i++) {
+        cmds[i](enqueue)();
     }
 }
 
-function program(scheduler, normalRenderer, initialModel, update, view) {
+function program(scheduler, normalRenderer, init, update, view) {
     // -- create renderer --
 
     return function() {
         var parentNode = document.createElement("div");
         document.body.appendChild(parentNode);
+
+        var initialModel = init.value0;
+        var initialCmds = init.value1;
 
         var renderer = normalRenderer(parentNode, view);
         var updateView = renderer(enqueue, initialModel);
@@ -43,6 +46,7 @@ function program(scheduler, normalRenderer, initialModel, update, view) {
         }
 
         var mainProcess = scheduler.spawn(onMessage);
+        dispatchCmds(initialCmds, enqueue);
 
         function enqueue(msg) {
             scheduler.send(mainProcess, msg);
@@ -51,4 +55,4 @@ function program(scheduler, normalRenderer, initialModel, update, view) {
     };
 }
 
-exports.programImpl = F5(program);
+exports.program = F5(program);

@@ -2,28 +2,26 @@ module Main where
 
 import Prelude
 
+import Async (Async, fromAff, makeAsync)
 import Control.Monad.Eff (Eff, kind Effect)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Data.List ((:))
 import Data.Monoid (mempty)
 import Data.Tuple (Tuple(Tuple))
+import Elm.Html (program)
 import Elm.Json.Decode as Json
 import Elm.Json.Encode as Json
-import Elm.Native.Platform (Cmd, program, (!))
+import Elm.Native.Platform ((!))
 import Elm.Native.VirtualDom (style, on, node, text, DOM, Node, property)
 import Network.HTTP.Affjax (get, AJAX)
-import Async (fromAff, makeAsync)
 
 main :: Eff Effs Unit
-main = 
-	let 
-		initialModel = "This goes on" 
-	in
-		program
-			initialModel
-			update
-			view
+main = program
+	{ init : init 
+	, update : update
+	, view : view
+	}
 
 type Model = String
 
@@ -36,7 +34,11 @@ type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX)
 
 foreign import repeat :: (Int -> Eff Effs Unit) -> Eff Effs Unit
 
-update :: Msg -> Model -> Tuple Model (Cmd Effs Msg)
+init :: Tuple Model (Array (Async Effs Msg))
+init = "This goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
+
+
+update :: Msg -> Model -> Tuple Model (Array (Async Effs Msg))
 update msg model =
 	case msg of
 		DoNothing ->
@@ -59,7 +61,7 @@ update msg model =
 				]
 
 		LogNumber n ->
-			model ! [ liftEff $ map (const DoNothing ) $ logShow n]
+			model ! [ liftEff $ map (const DoNothing ) $ logShow n ]
 
 
 
