@@ -17,7 +17,7 @@ import Elm.Html (DOM, program, Html, text, div)
 import Elm.Html.Attributes (style, id)
 import Elm.Html.Events (onClick)
 import Elm.Operators ((!))
-import Elm.Async (Async, makeAsync, fromAff)
+import Elm.Cmd (Cmd, makeCmd, fromAff)
 
 main :: forall a. Eff ( Effs a ) Unit
 main = program
@@ -37,11 +37,11 @@ type Effs a = (console :: CONSOLE , dom :: DOM, ajax :: AJAX | a)
 
 foreign import repeat :: forall a. (Int -> Eff (Effs a) Unit) -> Eff (Effs a) Unit
 
-init :: forall a. Tuple Model (Array (Async ( Effs a ) Msg))
+init :: forall a. Tuple Model (Array (Cmd ( Effs a ) Msg))
 init = "This goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
 
 
-update :: forall a. Msg -> Model -> Tuple Model (Array (Async ( Effs a ) Msg))
+update :: forall a. Msg -> Model -> Tuple Model (Array (Cmd ( Effs a ) Msg))
 update msg model =
 	case msg of
 		DoNothing ->
@@ -62,7 +62,7 @@ update msg model =
 				(model <> "and on") !
 				[ do
 					liftEff $ log "Clicked!"
-					num <- makeAsync repeat
+					num <- makeCmd repeat
 					pure $ LogNumber num
 				]
 

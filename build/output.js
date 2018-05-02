@@ -3401,13 +3401,13 @@ var PS = {};
   var Data_Either = PS["Data.Either"];
   var Data_Function = PS["Data.Function"];
   var Prelude = PS["Prelude"];        
-  var makeAsync = Control_Monad_Cont_Trans.ContT;
+  var makeCmd = Control_Monad_Cont_Trans.ContT;
   var fromAff = function (aff) {
-      return makeAsync(Data_Function.flip(Control_Monad_Aff.runAff_)(aff));
+      return makeCmd(Data_Function.flip(Control_Monad_Aff.runAff_)(aff));
   };
-  exports["makeAsync"] = makeAsync;
+  exports["makeCmd"] = makeCmd;
   exports["fromAff"] = fromAff;
-})(PS["Elm.Async"] = PS["Elm.Async"] || {});
+})(PS["Elm.Cmd"] = PS["Elm.Cmd"] || {});
 (function(exports) {/* eslint-disable no-use-before-define */
 
   function F5(fn) {
@@ -6180,7 +6180,7 @@ var PS = {};
   var $foreign = PS["Elm.Native.Platform"];
   var Control_Monad_Eff = PS["Control.Monad.Eff"];
   var Data_Tuple = PS["Data.Tuple"];
-  var Elm_Async = PS["Elm.Async"];
+  var Elm_Cmd = PS["Elm.Cmd"];
   var Elm_Native_Scheduler = PS["Elm.Native.Scheduler"];
   var Elm_Native_VirtualDom = PS["Elm.Native.VirtualDom"];
   var Prelude = PS["Prelude"];
@@ -6192,7 +6192,7 @@ var PS = {};
   var Control_Monad_Eff = PS["Control.Monad.Eff"];
   var Data_Monoid = PS["Data.Monoid"];
   var Data_Tuple = PS["Data.Tuple"];
-  var Elm_Async = PS["Elm.Async"];
+  var Elm_Cmd = PS["Elm.Cmd"];
   var Elm_Native_Platform = PS["Elm.Native.Platform"];
   var Elm_Native_Scheduler = PS["Elm.Native.Scheduler"];
   var Elm_Native_VirtualDom = PS["Elm.Native.VirtualDom"];
@@ -6261,7 +6261,6 @@ var PS = {};
       var number = 0;
       return function() {
           setInterval(function() {
-              console.log("Calling again");
               callback(number++);
           }, 1000);
       };
@@ -6755,7 +6754,7 @@ var PS = {};
   var Data_Semigroup = PS["Data.Semigroup"];
   var Data_Show = PS["Data.Show"];
   var Data_Tuple = PS["Data.Tuple"];
-  var Elm_Async = PS["Elm.Async"];
+  var Elm_Cmd = PS["Elm.Cmd"];
   var Elm_Html = PS["Elm.Html"];
   var Elm_Html_Attributes = PS["Elm.Html.Attributes"];
   var Elm_Html_Events = PS["Elm.Html.Events"];
@@ -6806,7 +6805,7 @@ var PS = {};
               return new Data_Tuple.Tuple(model, Data_Monoid.mempty(Data_Monoid.monoidArray));
           };
           if (msg instanceof LogSomething) {
-              return new Data_Tuple.Tuple(model, [ Control_Bind.bind(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Elm_Async.fromAff(getGoogleText))(function (v) {
+              return new Data_Tuple.Tuple(model, [ Control_Bind.bind(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Elm_Cmd.fromAff(getGoogleText))(function (v) {
                   return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Control_Monad_Eff_Class.liftEff(Control_Monad_Cont_Trans.monadEffContT(Control_Monad_Eff_Class.monadEffEff))(Control_Monad_Eff_Console.log("Just after request")))(function () {
                       return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))((function () {
                           if (v instanceof Data_Either.Right) {
@@ -6829,7 +6828,7 @@ var PS = {};
           };
           if (msg instanceof Clicked) {
               return new Data_Tuple.Tuple(model + "and on", [ Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Control_Monad_Eff_Class.liftEff(Control_Monad_Cont_Trans.monadEffContT(Control_Monad_Eff_Class.monadEffEff))(Control_Monad_Eff_Console.log("Clicked!")))(function () {
-                  return Control_Bind.bind(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Elm_Async.makeAsync($foreign.repeat))(function (v) {
+                  return Control_Bind.bind(Control_Monad_Cont_Trans.bindContT(Control_Monad_Eff.bindEff))(Elm_Cmd.makeCmd($foreign.repeat))(function (v) {
                       return Control_Applicative.pure(Control_Monad_Cont_Trans.applicativeContT(Control_Monad_Eff.applicativeEff))(new LogNumber(v));
                   });
               }) ]);

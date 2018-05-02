@@ -93,7 +93,7 @@ import Elm.Operators ((!))
 
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
-import Elm.Async (Async)
+import Elm.Cmd (Cmd)
 import Data.Monoid (mempty)
 
 
@@ -185,8 +185,8 @@ gradually and see them in context with examples.
 -}
 program ::
     forall msg model eff. 
-    { init :: (Tuple model (Array (Async (dom :: DOM | eff) msg)))
-    , update :: msg -> model -> (Tuple model (Array (Async (dom :: DOM | eff) msg)))
+    { init :: (Tuple model (Array (Cmd (dom :: DOM | eff) msg)))
+    , update :: msg -> model -> (Tuple model (Array (Cmd (dom :: DOM | eff) msg)))
     -- , subscriptions :: forall msg. model -> Sub msg
     , view :: model -> Html msg
     }

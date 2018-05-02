@@ -1,4 +1,4 @@
-module Elm.Async where
+module Elm.Cmd where
 
 import Prelude
 
@@ -10,14 +10,15 @@ import Data.Either (Either(Right, Left))
 
 -- Aff is equivalent to Tasks in Elm
 
-type Async a b = ContT Unit (Eff a) b
-makeAsync :: ∀ a eff. ((a -> Eff eff Unit) -> Eff eff Unit) -> Async eff a
-makeAsync = ContT
+type Cmd eff b = ContT Unit (Eff eff) b
 
-fromAff :: ∀ eff a. Aff eff a -> Async eff (Either Error a)
-fromAff aff = makeAsync $ flip runAff_ $ aff 
+makeCmd :: ∀ a eff. ((a -> Eff eff Unit) -> Eff eff Unit) -> Cmd eff a
+makeCmd = ContT
 
-runAff :: ∀ eff a msg. (Error -> msg) -> (a -> msg) -> Aff eff a -> Async eff msg
+fromAff :: ∀ eff a. Aff eff a -> Cmd eff (Either Error a)
+fromAff aff = makeCmd $ flip runAff_ $ aff 
+
+runAff :: ∀ eff a msg. (Error -> msg) -> (a -> msg) -> Aff eff a -> Cmd eff msg
 runAff onError onSuccess aff = do
 	e <- fromAff aff
 	case e of
