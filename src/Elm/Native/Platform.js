@@ -14,11 +14,21 @@ function F5(fn) {
     };
 }
 
+function runOnce(fn) {
+    var called = false;
+    return function() {
+        if (called) {
+            return;
+        }
+        called = true;
+        return fn.apply(null, arguments);
+    };
+}
 function dispatchCmds(cmds, enqueue) {
     var i;
     var length = cmds.length;
     for (i = 0; i < length; i++) {
-        cmds[i](enqueue)();
+        cmds[i](runOnce(enqueue))();
     }
 }
 

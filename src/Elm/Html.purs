@@ -88,8 +88,9 @@ expect to use frequently will be closer to the top.
 import Prelude
 import Elm.Native.VirtualDom as VirtualDom 
 import Elm.Native.Scheduler (scheduler)
-import Elm.Native.Platform ((!))
 import Elm.Native.Platform as Platform
+import Elm.Operators ((!))
+
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
 import Elm.Async (Async)

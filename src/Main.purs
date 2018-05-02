@@ -35,7 +35,7 @@ type Effs a = (console :: CONSOLE , dom :: DOM, ajax :: AJAX | a)
 
 -- Subscription
 
-foreign import repeat :: forall a. (Int -> Eff ( Effs a ) Unit) -> Eff ( Effs a ) Unit
+foreign import repeat :: forall a. (Int -> Eff (Effs a) Unit) -> Eff (Effs a) Unit
 
 init :: forall a. Tuple Model (Array (Async ( Effs a ) Msg))
 init = "This goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
@@ -50,9 +50,12 @@ update msg model =
 		LogSomething ->
 			model !
 				[do 
-					t <- fromAff getGoogleText 
-					liftEff $ log "Logging something"	
-					liftEff $ logShow t
+					et <- fromAff getGoogleText
+					liftEff $ log "Just after request"
+					case et of 
+						Right t -> liftEff $ log t
+						Left err -> liftEff $ log "Error" >>= \_ -> logShow err
+					liftEff $ log "After response handling" 
 					pure DoNothing
 				]
 		Clicked ->
@@ -74,7 +77,6 @@ getGoogleText = do
 
 view :: Model -> Html Msg
 view model =
-	map (const LogSomething) $
 	div 
 		[ id "greeting"
 		, onClick Clicked
