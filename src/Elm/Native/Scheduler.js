@@ -6,7 +6,8 @@ var scheduler = (function() {
     var pid = 0;
 
     // Maximum number of times that we will run entire updates
-    // consecutively. This means that we are propbably in a loop
+    // consecutively. If we hit the max it means that we are
+    // propbably in a loop
     var MAX_STEPS = 10000;
 
     // Create a process

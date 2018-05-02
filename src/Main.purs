@@ -6,9 +6,7 @@ import Control.Monad.Eff (Eff, kind Effect)
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Control.Monad.Aff (Aff)
-import Control.Monad.Aff.Class (liftAff)
 import Data.Either (Either (Left, Right))
-import Data.List ((:))
 import Data.Monoid (mempty)
 import Data.Tuple (Tuple(Tuple))
 import Network.HTTP.Affjax (get, AJAX, Affjax)
@@ -19,7 +17,7 @@ import Elm.Html.Events (onClick)
 import Elm.Operators ((!))
 import Elm.Cmd (Cmd, makeCmd, fromAff)
 
-main :: forall a. Eff ( Effs a ) Unit
+main :: Eff Effs Unit
 main = program
 	{ init : init 
 	, update : update
@@ -30,18 +28,18 @@ type Model = String
 
 data Msg = Clicked | DoNothing | LogSomething | LogNumber Int
 
-type Effs a = (console :: CONSOLE , dom :: DOM, ajax :: AJAX | a)
+type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX )
 
 
 -- Subscription
 
-foreign import repeat :: forall a. (Int -> Eff (Effs a) Unit) -> Eff (Effs a) Unit
+foreign import repeat :: (Int -> Eff Effs Unit) -> Eff Effs Unit
 
-init :: forall a. Tuple Model (Array (Cmd ( Effs a ) Msg))
+init :: Tuple Model (Array (Cmd Effs Msg))
 init = "This goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
 
 
-update :: forall a. Msg -> Model -> Tuple Model (Array (Cmd ( Effs a ) Msg))
+update :: Msg -> Model -> Tuple Model (Array (Cmd Effs Msg))
 update msg model =
 	case msg of
 		DoNothing ->
