@@ -24,11 +24,17 @@ function runOnce(fn) {
         return fn.apply(null, arguments);
     };
 }
+
 function dispatchCmds(cmds, enqueue) {
     var i;
     var length = cmds.length;
     for (i = 0; i < length; i++) {
-        cmds[i](runOnce(enqueue))();
+        var f = cmds[i];
+        var run = function() {
+            f(runOnce(enqueue))();
+        };
+
+        setTimeout(run, 0);
     }
 }
 
