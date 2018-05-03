@@ -36,7 +36,7 @@ type Effs = (console :: CONSOLE , dom :: DOM, ajax :: AJAX )
 foreign import repeat :: (Int -> Eff Effs Unit) -> Eff Effs Unit
 
 init :: Tuple Model (Array (Cmd Effs Msg))
-init = "And it goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
+init = "WWWW it goes on" ! [ liftEff $ const DoNothing <$> log "Initiated!" ]
 
 
 update :: Msg -> Model -> Tuple Model (Array (Cmd Effs Msg))
