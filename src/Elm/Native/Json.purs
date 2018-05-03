@@ -32,7 +32,7 @@ foreign import map1 :: forall a value. (a -> value) -> Decoder a -> Decoder valu
 -- foreign import decodeKeyValuePairs ::
 
 -- foreign import andThen ::
--- foreign import fail ::
+foreign import fail :: forall a. String -> Decoder a
 foreign import succeed :: forall a. a -> Decoder a
 -- foreign import oneOf ::
 

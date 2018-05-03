@@ -438,15 +438,14 @@ succeed :: forall a. a -> Decoder a
 succeed = Elm.Native.Json.succeed
 
 
--- {-| Ignore the JSON and make the decoder fail. This is handy when used with
--- `oneOf` or `andThen` where you want to give a custom error message in some
--- case.
+{-| Ignore the JSON and make the decoder fail. This is handy when used with
+`oneOf` or `andThen` where you want to give a custom error message in some
+case.
 
--- See the [`andThen`](#andThen) docs for an example.
--- -}
--- fail : String -> Decoder a
--- fail =
---   Native.Json.fail
+See the [`andThen`](#andThen) docs for an example.
+-}
+fail :: forall a. String -> Decoder a
+fail = Elm.Native.Json.fail
 
 
 -- {-| Create decoders that depend on previous results. If you are creating
