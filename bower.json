@@ -1,5 +1,5 @@
 {
-  "name": "elm-vdom",
+  "name": "purescript-dominator",
   "ignore": [
     "**/.*",
     "node_modules",
