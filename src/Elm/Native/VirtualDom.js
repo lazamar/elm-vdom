@@ -1879,7 +1879,8 @@ exports.normalRenderer = vdom.normalRenderer;
 exports.renderOnce = function(view) {
     return function(initialModel) {
         return function() {
-            var baseNode = document.querySelector(".test-element");
+            // TODO: Change this to accept an actual baseNode
+            var baseNode = document.body;
 
             var model = initialModel;
             var renderer = vdom.normalRenderer(baseNode, view);
