@@ -1,6 +1,5 @@
 /* globals  
     _elm_lang$core$Native_Utils, 
-    _elm_lang$core$Json_Decode$map,
     _elm_lang$core$Platform_Cmd$none,
     _elm_lang$core$Platform_Sub$none,
     _elm_lang$core$Native_Platform,
@@ -10,9 +9,14 @@
 // Compiler functions
 
 var _Native_Json = (function() {
-    function run() {
-        console.log(decoder);
-        return decoder(v);
+    function run(decoder, value) {
+        return decoder(value);
+    }
+
+    function map(tagger, decoder) {
+        return function(v) {
+            return tagger(decoder(v));
+        };
     }
 
     function equality(a, b) {
@@ -79,7 +83,7 @@ var _Native_Json = (function() {
     }
 
     return {
-        run: run,
+        run: F2(run),
         equality: equality
     };
 })();
@@ -462,7 +466,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         return on(
             property.realKey,
             property.value.options,
-            A2(_elm_lang$core$Json_Decode$map, func, property.value.decoder)
+            A2(_Native_Json.map, func, property.value.decoder)
         );
     }
 
@@ -605,7 +609,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
 
             var value = A2(_Native_Json.run, info.decoder, event);
 
-            if (value.ctor === "Ok") {
+            if (value.constructor.name === "Right") {
                 var options = info.options;
                 if (options.stopPropagation) {
                     event.stopPropagation();
