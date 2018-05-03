@@ -1,6 +1,7 @@
 module Elm.Native.VirtualDom 
   ( DOM
   , Node
+  , Decoder, succeed
   , Renderer, normalRenderer
   , text, node
   , Property, property, attribute, attributeNS
@@ -13,18 +14,19 @@ module Elm.Native.VirtualDom
 import Prelude
 
 import Control.Monad.Eff (Eff, kind Effect)
-import Data.Functor (class Functor, map)
 import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple)
-import Elm.Json.Decode as Json
-import Elm.Json.Encode as Json
+import Data.Foreign (Foreign, F, MultipleErrors)
+import Data.Either (Either)
+import Control.Monad.Except (runExcept)
+
 
 -- Define DOM effect type
 foreign import data DOM :: Effect
 
 -- type ViewFunc msg model = model -> Node msg
 
-foreign import renderOnce :: forall msg model a. 
+foreign import renderOnce :: ∀ msg model a. 
   (model -> Node msg) 
   -> model 
   -> Eff (dom :: DOM | a ) Unit
@@ -61,7 +63,7 @@ this `()` value like this:
 So now all the events produced by `button` will be transformed to be of type
 `Msg` so they can be handled by your update function!
 -}
-foreign import nodeMap :: forall a msg. (a -> msg) -> Node a -> Node msg
+foreign import nodeMap :: ∀ a msg. (a -> msg) -> Node a -> Node msg
 instance functorNode :: Functor Node where
   map = nodeMap 
 
@@ -83,9 +85,9 @@ a list of child nodes.
         [ property "id" (Json.string "greeting") ]
         [ text "Hello!" ]
 -}
-foreign import node_ :: forall msg. String -> List (Property msg) -> List (Node msg) -> Node msg
+foreign import node_ :: ∀ msg. String -> List (Property msg) -> List (Node msg) -> Node msg
 
-node :: forall msg. String -> Array (Property msg) -> Array (Node msg) -> Node msg
+node :: ∀ msg. String -> Array (Property msg) -> Array (Node msg) -> Node msg
 node s p c =
   node_ s (fromFoldable p) (fromFoldable c)
 
@@ -95,7 +97,7 @@ exactly as you specify.
     text "Hello World!"
 -}
 
-foreign import text :: forall msg. String -> Node msg
+foreign import text :: ∀ msg. String -> Node msg
 
 
 -- -- PROPERTIES
@@ -122,7 +124,7 @@ data Property msg = Property
 
 {-| Transform the messages produced by a `Property`.
 -}
-foreign import mapProperty :: forall a b. (a -> b) -> Property a -> Property b
+foreign import mapProperty :: ∀ a b. (a -> b) -> Property a -> Property b
 
 instance functorProperty :: Functor Property where
   map = mapProperty
@@ -140,7 +142,7 @@ instance functorProperty :: Functor Property where
 Notice that you must give the *property* name, so we use `className` as it
 would be in JavaScript, not `class` as it would appear in HTML.
 -}
-foreign import property :: forall msg. String -> Json.Value -> Property msg
+foreign import property :: ∀ msg. String -> Foreign -> Property msg
 
 
 {-| Create arbitrary HTML *attributes*. Maps onto JavaScript’s `setAttribute`
@@ -155,7 +157,7 @@ function under the hood.
 Notice that you must give the *attribute* name, so we use `class` as it would
 be in HTML, not `className` as it would appear in JS.
 -}
-foreign import attribute :: forall msg. String -> String -> Property msg
+foreign import attribute :: ∀ msg. String -> String -> Property msg
 
 
 {-| Would you believe that there is another way to do this?! This corresponds
@@ -163,7 +165,7 @@ to JavaScript's `setAttributeNS` function under the hood. It is doing pretty
 much the same thing as `attribute` but you are able to have "namespaced"
 attributes. This is used in some SVG stuff at least.
 -}
-foreign import attributeNS :: forall msg. String -> String -> String -> Property msg
+foreign import attributeNS :: ∀ msg. String -> String -> String -> Property msg
 
 
 
@@ -182,10 +184,14 @@ foreign import attributeNS :: forall msg. String -> String -> String -> Property
     greeting =
       node "div" [ myStyle ] [ text "Hello!" ]
 -}
-foreign import style :: forall msg. List (Tuple String String) -> Property msg
+foreign import style :: ∀ msg. List (Tuple String String) -> Property msg
 
 -- -- EVENTS
 
+type Decoder a = Foreign -> F a
+
+succeed :: ∀ a. a -> Decoder a
+succeed v = const $ pure v
 
 {-| Create a custom event listener.
 
@@ -200,14 +206,24 @@ You first specify the name of the event in the same format as with JavaScript’
 information out of the event object. If the decoder succeeds, it will produce
 a message and route it to your `update` function.
 -}
-on :: forall msg. String -> Json.Decoder msg -> Property msg
+on :: ∀ msg. String -> Decoder msg -> Property msg
 on eventName decoder =
   onWithOptions eventName defaultOptions decoder
 
 
+runDecoder :: ∀ msg. Decoder msg -> Foreign -> Either MultipleErrors msg
+runDecoder dec val = runExcept $ dec val
+
 {-| Same as `on` but you can set a few options.
 -}
-foreign import onWithOptions :: forall msg. String -> Options -> Json.Decoder msg -> Property msg
+
+type FullDecoder a = Foreign -> Either MultipleErrors a
+
+onWithOptions :: ∀ msg. String -> Options -> Decoder msg -> Property msg
+onWithOptions s o d =
+  onWithOptions_ s o (runDecoder d)
+
+foreign import onWithOptions_ :: ∀ msg. String -> Options -> FullDecoder msg -> Property msg
 
 
 {-| Options for an event listener. If `stopPropagation` is true, it means the
@@ -248,17 +264,17 @@ can check to see if `model` is referentially equal to the previous value used,
 and if so, we just stop. No need to build up the tree structure and diff it,
 we know if the input to `view` is the same, the output must be the same!
 -}
-foreign import lazy :: forall a msg. (a -> Node msg) -> a -> Node msg
+foreign import lazy :: ∀ a msg. (a -> Node msg) -> a -> Node msg
 
 
 {-| Same as `lazy` but checks on two arguments.
 -}
-foreign import lazy2 :: forall a b msg. (a -> b -> Node msg) -> a -> b -> Node msg
+foreign import lazy2 :: ∀ a b msg. (a -> b -> Node msg) -> a -> b -> Node msg
 
 
 {-| Same as `lazy` but checks on three arguments.
 -}
-foreign import lazy3 :: forall a b c msg. (a -> b -> c -> Node msg) -> a -> b -> c -> Node msg
+foreign import lazy3 :: ∀ a b c msg. (a -> b -> c -> Node msg) -> a -> b -> c -> Node msg
 
 
 {-| Works just like `node`, but you add a unique identifier to each child
@@ -266,9 +282,9 @@ node. You want this when you have a list of nodes that is changing: adding
 nodes, removing nodes, etc. In these cases, the unique identifiers help make
 the DOM modifications more efficient.
 -}
-foreign import keyedNode_ :: forall msg. String -> List (Property msg) -> List ( Tuple String (Node msg) ) -> Node msg
+foreign import keyedNode_ :: ∀ msg. String -> List (Property msg) -> List ( Tuple String (Node msg) ) -> Node msg
 
-keyedNode :: forall msg. String -> Array (Property msg) -> Array ( Tuple String (Node msg) ) -> Node msg
+keyedNode :: ∀ msg. String -> Array (Property msg) -> Array ( Tuple String (Node msg) ) -> Node msg
 keyedNode s p n = 
   keyedNode_ s (fromFoldable p) (fromFoldable n)
 

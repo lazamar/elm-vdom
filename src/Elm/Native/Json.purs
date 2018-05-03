@@ -5,6 +5,7 @@ import Data.Tuple (Tuple)
 import Data.Functor (class Functor)
 
 data Value = Value
+
 data Decoder a = Decoder
 
 instance functorDecoder :: Functor Decoder where

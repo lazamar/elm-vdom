@@ -1,6 +1,7 @@
 module Elm.Json.Decode
   ( Decoder
   , succeed 
+  , fail
   , field
   , at
   , string

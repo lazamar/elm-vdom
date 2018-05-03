@@ -9,6 +9,81 @@
 /* eslint-disable no-unused-vars, no-use-before-define, no-redeclare, complexity, max-len */
 // Compiler functions
 
+var _Native_Json = (function() {
+    function run() {
+        console.log(decoder);
+        return decoder(v);
+    }
+
+    function equality(a, b) {
+        if (a === b) {
+            return true;
+        }
+
+        if (a.tag !== b.tag) {
+            return false;
+        }
+
+        switch (a.tag) {
+            case "succeed":
+            case "fail":
+                return a.msg === b.msg;
+
+            case "bool":
+            case "int":
+            case "float":
+            case "string":
+            case "value":
+                return true;
+
+            case "null":
+                return a.value === b.value;
+
+            case "list":
+            case "array":
+            case "maybe":
+            case "key-value":
+                return equality(a.decoder, b.decoder);
+
+            case "field":
+                return a.field === b.field && equality(a.decoder, b.decoder);
+
+            case "index":
+                return a.index === b.index && equality(a.decoder, b.decoder);
+
+            case "map-many":
+                if (a.func !== b.func) {
+                    return false;
+                }
+                return listEquality(a.decoders, b.decoders);
+
+            case "andThen":
+                return a.callback === b.callback && equality(a.decoder, b.decoder);
+
+            case "oneOf":
+                return listEquality(a.decoders, b.decoders);
+        }
+    }
+
+    function listEquality(aDecoders, bDecoders) {
+        var len = aDecoders.length;
+        if (len !== bDecoders.length) {
+            return false;
+        }
+        for (var i = 0; i < len; i++) {
+            if (!equality(aDecoders[i], bDecoders[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return {
+        run: run,
+        equality: equality
+    };
+})();
+
 function F(arity, fun, wrapper) {
     wrapper.a = arity;
     wrapper.f = fun;
@@ -152,25 +227,6 @@ function A8(fun, a, b, c, d, e, f, g, h) {
 function A9(fun, a, b, c, d, e, f, g, h, i) {
     return fun.a === 9 ? fun.f(a, b, c, d, e, f, g, h, i) : fun(a)(b)(c)(d)(e)(f)(g)(h)(i);
 }
-
-window._elm_lang$core$Native_Core = {
-    F2: F2,
-    F3: F3,
-    F4: F4,
-    F5: F5,
-    F6: F6,
-    F7: F7,
-    F8: F8,
-    F9: F9,
-    A2: A2,
-    A3: A3,
-    A4: A4,
-    A5: A5,
-    A6: A6,
-    A7: A7,
-    A8: A8,
-    A9: A9
-};
 
 // =============================================================
 // VIRTUAL DOM
@@ -396,7 +452,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 return false;
             }
         }
-        return window._elm_lang$core$Native_Json.equality(a.decoder, b.decoder);
+        return _Native_Json.equality(a.decoder, b.decoder);
     }
 
     function mapProperty(func, property) {
@@ -547,7 +603,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         function eventHandler(event) {
             var info = eventHandler.info;
 
-            var value = A2(window._elm_lang$core$Native_Json.run, info.decoder, event);
+            var value = A2(_Native_Json.run, info.decoder, event);
 
             if (value.ctor === "Ok") {
                 var options = info.options;
@@ -1436,7 +1492,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 crash(errorMessage, domNode);
             }
 
-            var result = A2(window._elm_lang$core$Native_Json.run, flagDecoder, flags);
+            var result = A2(_Native_Json.run, flagDecoder, flags);
             if (result.ctor === "Ok") {
                 return init(result.value0);
             }
@@ -1859,7 +1915,7 @@ exports.text = vdom.text;
 // exports.custom = vdom.custom;
 exports.nodeMap = vdom.map;
 
-exports.onWithOptions = vdom.onWithOptions;
+exports.onWithOptions_ = vdom.onWithOptions;
 exports.style = vdom.style;
 exports.property = vdom.property;
 exports.attribute = vdom.attribute;

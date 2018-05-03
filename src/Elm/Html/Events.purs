@@ -3,12 +3,12 @@ module Elm.Html.Events
   , onMouseDown, onMouseUp
   , onMouseEnter, onMouseLeave
   , onMouseOver, onMouseOut
-  , onInput, onCheck, onSubmit
+  , onInput,  onSubmit
   , onBlur, onFocus
   , on, onWithOptions, Options, defaultOptions
   , targetValue, targetChecked, keyCode
   ) where
-
+-- onCheck,
 {-|
 It is often helpful to create an [Union Type][] so you can have many different kinds
 of events as seen in the [TodoMVC][] example.
@@ -36,11 +36,13 @@ of events as seen in the [TodoMVC][] example.
 -}
 
 import Prelude
+
+import Data.Foreign.Class (class Decode, decode)
+import Data.Foreign.Index (readProp)
+import Data.Foreign (Foreign, F, readString, readBoolean, readInt)
 import Elm.Html (Attribute)
-import Elm.Json.Decode as Json
+import Elm.Native.VirtualDom (Decoder, succeed)
 import Elm.Native.VirtualDom as VirtualDom
-
-
 
 -- MOUSE EVENTS
 
@@ -48,49 +50,49 @@ import Elm.Native.VirtualDom as VirtualDom
 {-|-}
 onClick :: forall msg. msg -> Attribute msg
 onClick msg =
-  on "click" (Json.succeed msg)
+  on "click" (succeed msg)
 
 
 {-|-}
 onDoubleClick :: forall msg. msg -> Attribute msg
 onDoubleClick msg =
-  on "dblclick" (Json.succeed msg)
+  on "dblclick" (succeed msg)
 
 
 {-|-}
 onMouseDown :: forall msg. msg -> Attribute msg
 onMouseDown msg =
-  on "mousedown" (Json.succeed msg)
+  on "mousedown" (succeed msg)
 
 
 {-|-}
 onMouseUp :: forall msg. msg -> Attribute msg
 onMouseUp msg =
-  on "mouseup" (Json.succeed msg)
+  on "mouseup" (succeed msg)
 
 
 {-|-}
 onMouseEnter :: forall msg. msg -> Attribute msg
 onMouseEnter msg =
-  on "mouseenter" (Json.succeed msg)
+  on "mouseenter" (succeed msg)
 
 
 {-|-}
 onMouseLeave :: forall msg. msg -> Attribute msg
 onMouseLeave msg =
-  on "mouseleave" (Json.succeed msg)
+  on "mouseleave" (succeed msg)
 
 
 {-|-}
 onMouseOver :: forall msg. msg -> Attribute msg
 onMouseOver msg =
-  on "mouseover" (Json.succeed msg)
+  on "mouseover" (succeed msg)
 
 
 {-|-}
 onMouseOut :: forall msg. msg -> Attribute msg
 onMouseOut msg =
-  on "mouseout" (Json.succeed msg)
+  on "mouseout" (succeed msg)
 
 
 
@@ -108,7 +110,7 @@ For more details on how `onInput` works, check out [targetValue](#targetValue).
 -}
 onInput :: forall msg. (String -> msg) -> Attribute msg
 onInput tagger =
-  on "input" (map tagger targetValue)
+  on "input" (map tagger <<< targetValue)
 
 
 {-| Capture [change](https:: forall msg.//developer.mozilla.org/en-US/docs/Web/Events/change)
@@ -117,9 +119,9 @@ on any input event.
 
 Check out [targetChecked](#targetChecked) for more details on how this works.
 -}
-onCheck :: forall msg. (Boolean -> msg) -> Attribute msg
-onCheck tagger =
-  on "change" (map tagger targetChecked)
+-- onCheck :: forall msg. (Boolean -> msg) -> Attribute msg
+-- onCheck tagger =
+--   on "change" (map tagger targetChecked)
 
 
 {-| Capture a [submit](https:: forall msg.//developer.mozilla.org/en-US/docs/Web/Events/submit)
@@ -130,12 +132,12 @@ different behavior, use `onWithOptions` to create a customized version of
 -}
 onSubmit :: forall msg. msg -> Attribute msg
 onSubmit msg =
-  onWithOptions "submit" onSubmitOptions (Json.succeed msg)
+  onWithOptions "submit" onSubmitOptions (succeed msg)
 
 
 onSubmitOptions :: forall msg. Options
 onSubmitOptions =
-  defaultOptions { preventDefault = true }
+  VirtualDom.defaultOptions { preventDefault = true }
 
 
 -- FOCUS EVENTS
@@ -144,13 +146,13 @@ onSubmitOptions =
 {-|-}
 onBlur :: forall msg. msg -> Attribute msg
 onBlur msg =
-  on "blur" (Json.succeed msg)
+  on "blur" (succeed msg)
 
 
 {-|-}
 onFocus :: forall msg. msg -> Attribute msg
 onFocus msg =
-  on "focus" (Json.succeed msg)
+  on "focus" (succeed msg)
 
 
 
@@ -164,7 +166,7 @@ you have the power! Here is how `onClick` is defined for example:: forall msg.
 
     onClick :: forall msg. msg -> Attribute msg
     onClick message =
-      on "click" (Json.succeed message)
+      on "click" (const message)
 
 The first argument is the event name in the same format as with JavaScript's
 [`addEventListener`][aEL] function.
@@ -181,14 +183,14 @@ It really does help!
 [decoder]:: forall msg. http:: forall msg.//package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode
 [tutorial]:: forall msg. https:: forall msg.//github.com/evancz/elm-architecture-tutorial/
 -}
-on :: forall msg. String -> Json.Decoder msg -> Attribute msg
+on :: forall msg. String -> Decoder msg -> Attribute msg
 on =
   VirtualDom.on
 
 
 {-| Same as `on` but you can set a few options.
 -}
-onWithOptions :: forall msg. String -> Options -> Json.Decoder msg -> Attribute msg
+onWithOptions :: forall msg. String -> Options -> Decoder msg -> Attribute msg
 onWithOptions =
   VirtualDom.onWithOptions
 
@@ -220,8 +222,7 @@ defaultOptions =
 
 -- COMMON DECODERS
 
-
-{-| A `Json.Decoder` for grabbing `event.target.value`. We use this to define
+{-| A `Decoder` for grabbing `event.target.value`. We use this to define
 `onInput` as follows:: forall msg.
 
     import Json.Decode as Json
@@ -233,12 +234,13 @@ defaultOptions =
 You probably will never need this, but hopefully it gives some insights into
 how to make custom event handlers.
 -}
-targetValue :: forall msg. Json.Decoder String
-targetValue =
-  Json.at ["target", "value"] Json.string
+targetValue :: forall msg. Decoder String
+targetValue f = 
+  readProp "target" f 
+  >>= readProp "value"
+  >>= readString
 
-
-{-| A `Json.Decoder` for grabbing `event.target.checked`. We use this to define
+{-| A `Decoder` for grabbing `event.target.checked`. We use this to define
 `onCheck` as follows:: forall msg.
 
     import Json.Decode as Json
@@ -247,12 +249,13 @@ targetValue =
     onCheck tagger =
       on "input" (map tagger targetChecked)
 -}
-targetChecked :: forall msg. Json.Decoder Boolean
-targetChecked =
-  Json.at ["target", "checked"] Json.bool
+targetChecked :: Decoder Boolean
+targetChecked f =
+  readProp "target" f
+  >>= readProp "checked"
+  >>= readBoolean
 
-
-{-| A `Json.Decoder` for grabbing `event.keyCode`. This helps you define
+{-| A `Decoder` for grabbing `event.keyCode`. This helps you define
 keyboard listeners like this:: forall msg.
 
     import Json.Decode as Json
@@ -265,6 +268,10 @@ keyboard listeners like this:: forall msg.
 towards `event.key`. Once this is supported in more browsers, we may add
 helpers here for `onKeyUp`, `onKeyDown`, `onKeyPress`, etc.
 -}
-keyCode :: forall msg. Json.Decoder Int
-keyCode =
-  Json.field "keyCode" Json.int
+
+type KeyCode = { keyCode :: Int }
+
+keyCode :: forall msg. Decoder Int
+keyCode f =
+  readProp "keyCode" f
+  >>= readInt

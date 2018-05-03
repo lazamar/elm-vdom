@@ -89,8 +89,9 @@ Attributes that can be attached to any HTML tag but are less commonly used.
 
 import Prelude
 import Elm.Html (Attribute)
-import Elm.Json.Encode as Json
 import Elm.Native.VirtualDom as VirtualDom
+
+import Data.Foreign (Foreign, F, toForeign)
 import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple(Tuple), fst, snd)
 import Data.Foldable (intercalate, fold)
@@ -169,19 +170,19 @@ Read more about the difference between properties and attributes [here][].
 
 [here]:: forall msg. https:: forall msg.//github.com/elm-lang/html/blob/master/properties-vs-attributes.md
 -}
-property :: forall msg. String -> Json.Value -> Attribute msg
+property :: forall msg. String -> Foreign -> Attribute msg
 property =
   VirtualDom.property
 
 
 stringProperty :: forall msg. String -> String -> Attribute msg
 stringProperty name_ string =
-  property name_ (Json.string string)
+  property name_ (toForeign string)
 
 
 boolProperty :: forall msg. String -> Boolean -> Attribute msg
 boolProperty name_ bool =
-  property name_ (Json.bool bool)
+  property name_ (toForeign bool)
 
 
 {-| Create *attributes*, like saying `domNode.setAttribute('class', 'greeting')`
