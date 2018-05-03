@@ -1935,18 +1935,3 @@ exports.keyedNode_ = vdom.keyedNode;
 // exports.programWithFlags = vdom.programWithFlags;
 // exports.staticProgram = vdom.staticProgram;
 exports.normalRenderer = vdom.normalRenderer;
-
-exports.renderOnce = function(view) {
-    return function(initialModel) {
-        return function() {
-            // TODO: Change this to accept an actual baseNode
-            var baseNode = document.body;
-
-            var model = initialModel;
-            var renderer = vdom.normalRenderer(baseNode, view);
-            var updateView = renderer(function() {}, model);
-
-            updateView(model);
-        };
-    };
-};

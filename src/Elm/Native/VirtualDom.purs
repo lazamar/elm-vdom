@@ -13,7 +13,7 @@ module Elm.Native.VirtualDom
 
 import Prelude
 
-import Control.Monad.Eff (Eff, kind Effect)
+import Control.Monad.Eff (kind Effect)
 import Data.List (List, fromFoldable)
 import Data.Tuple (Tuple)
 import Data.Foreign (Foreign, F, MultipleErrors)
@@ -23,13 +23,6 @@ import Control.Monad.Except (runExcept)
 
 -- Define DOM effect type
 foreign import data DOM :: Effect
-
--- type ViewFunc msg model = model -> Node msg
-
-foreign import renderOnce :: ∀ msg model a. 
-  (model -> Node msg) 
-  -> model 
-  -> Eff (dom :: DOM | a ) Unit
 
 {-| A Renderer takes care of dom and virtual dom updates
 -}
