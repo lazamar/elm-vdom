@@ -1,6 +1,6 @@
 module Elm.Html.Attributes
   ( style, property, attribute
-  , className, classList, id, title, hidden
+  , class_, classList, id, title, hidden
   , type_, value, defaultValue, checked, placeholder, selected
   , accept, acceptCharset, action, autocomplete, autofocus
   , disabled, enctype, formaction, list, maxlength, minlength, method, multiple
@@ -150,7 +150,7 @@ classList list =
     |> filter snd
     |> map fst
     |> intercalate " "
-    |> className
+    |> class_
 
 
 
@@ -205,8 +205,8 @@ attribute =
 
 
 {-| Often used with CSS to style elements with common properties. -}
-className :: forall msg. String -> Attribute msg
-className name_ =
+class_ :: forall msg. String -> Attribute msg
+class_ name_ =
   stringProperty "className" name_
 
 

@@ -52,49 +52,49 @@ import Data.Foreign (Foreign, F, readString, readBoolean, readInt)
 {-|-}
 onClick :: forall msg. msg -> Attribute msg
 onClick msg =
-  on "click" (succeed msg)
+  on "click" (const $ succeed msg)
 
 
 {-|-}
 onDoubleClick :: forall msg. msg -> Attribute msg
 onDoubleClick msg =
-  on "dblclick" (succeed msg)
+  on "dblclick" (const $ succeed msg)
 
 
 {-|-}
 onMouseDown :: forall msg. msg -> Attribute msg
 onMouseDown msg =
-  on "mousedown" (succeed msg)
+  on "mousedown" (const $ succeed msg)
 
 
 {-|-}
 onMouseUp :: forall msg. msg -> Attribute msg
 onMouseUp msg =
-  on "mouseup" (succeed msg)
+  on "mouseup" (const $ succeed msg)
 
 
 {-|-}
 onMouseEnter :: forall msg. msg -> Attribute msg
 onMouseEnter msg =
-  on "mouseenter" (succeed msg)
+  on "mouseenter" (const $ succeed msg)
 
 
 {-|-}
 onMouseLeave :: forall msg. msg -> Attribute msg
 onMouseLeave msg =
-  on "mouseleave" (succeed msg)
+  on "mouseleave" (const $ succeed msg)
 
 
 {-|-}
 onMouseOver :: forall msg. msg -> Attribute msg
 onMouseOver msg =
-  on "mouseover" (succeed msg)
+  on "mouseover" (const $ succeed msg)
 
 
 {-|-}
 onMouseOut :: forall msg. msg -> Attribute msg
 onMouseOut msg =
-  on "mouseout" (succeed msg)
+  on "mouseout" (const $ succeed msg)
 
 
 
@@ -134,7 +134,7 @@ different behavior, use `onWithOptions` to create a customized version of
 -}
 onSubmit :: forall msg. msg -> Attribute msg
 onSubmit msg =
-  onWithOptions "submit" onSubmitOptions (succeed msg)
+  onWithOptions "submit" onSubmitOptions (const $ succeed msg)
 
 
 onSubmitOptions :: forall msg. Options
@@ -148,13 +148,13 @@ onSubmitOptions =
 {-|-}
 onBlur :: forall msg. msg -> Attribute msg
 onBlur msg =
-  on "blur" (succeed msg)
+  on "blur" (const $ succeed msg)
 
 
 {-|-}
 onFocus :: forall msg. msg -> Attribute msg
 onFocus msg =
-  on "focus" (succeed msg)
+  on "focus" (const $ succeed msg)
 
 
 

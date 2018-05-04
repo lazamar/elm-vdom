@@ -12,8 +12,8 @@ type Decoder a = Foreign -> F a
 
 {-  Creates a decoder that will succeed with the value provided
 -}
-succeed :: ∀ a. a -> Decoder a
-succeed v = const $ pure v
+succeed :: ∀ a. a -> F a
+succeed v = pure v
 
-fail :: ∀ a. String -> Decoder a
-fail reason = const $ Foreign.fail $ ForeignError reason
+fail :: ∀ a. String -> F a
+fail reason = Foreign.fail $ ForeignError reason
