@@ -1,7 +1,6 @@
 module Elm.Native.VirtualDom 
   ( DOM
   , Node
-  , Decoder, succeed
   , Renderer, normalRenderer
   , text, node
   , Property, property, attribute, attributeNS
@@ -12,6 +11,8 @@ module Elm.Native.VirtualDom
   ) where
 
 import Prelude
+
+import Elm.Json (Decoder)
 
 import Control.Monad.Eff (kind Effect)
 import Data.List (List, fromFoldable)
@@ -180,11 +181,6 @@ foreign import attributeNS :: ∀ msg. String -> String -> String -> Property ms
 foreign import style :: ∀ msg. List (Tuple String String) -> Property msg
 
 -- -- EVENTS
-
-type Decoder a = Foreign -> F a
-
-succeed :: ∀ a. a -> Decoder a
-succeed v = const $ pure v
 
 {-| Create a custom event listener.
 

@@ -37,12 +37,14 @@ of events as seen in the [TodoMVC][] example.
 
 import Prelude
 
+import Elm.Html (Attribute)
+import Elm.Native.VirtualDom as VirtualDom
+import Elm.Json (Decoder, succeed)
+
 import Data.Foreign.Class (class Decode, decode)
 import Data.Foreign.Index (readProp)
 import Data.Foreign (Foreign, F, readString, readBoolean, readInt)
-import Elm.Html (Attribute)
-import Elm.Native.VirtualDom (Decoder, succeed)
-import Elm.Native.VirtualDom as VirtualDom
+
 
 -- MOUSE EVENTS
 
