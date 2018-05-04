@@ -1,4 +1,4 @@
-# Elm's Virtual DOM in PureString
+# Elm's Virtual DOM in PureScript
 
 THIS IS NOT PRODUCTION READY!
 
