@@ -5,12 +5,14 @@ import Prelude
 import Control.Monad.Cont.Trans (ContT(ContT))
 import Control.Monad.Eff (Eff, kind Effect)
 import Control.Monad.Eff.Exception (Error)
-import Control.Monad.Aff (Aff, runAff_, effCanceler, makeAff)
+import Control.Monad.Aff (Aff, runAff_)
 import Data.Either (Either(Right, Left))
 
 -- Aff is equivalent to Tasks in Dominator
 
 type Cmd eff b = ContT Unit (Eff eff) b
+
+type Cmds eff b = Array (Cmd eff b)
 
 makeCmd :: ∀ a eff. ((a -> Eff eff Unit) -> Eff eff Unit) -> Cmd eff a
 makeCmd = ContT
