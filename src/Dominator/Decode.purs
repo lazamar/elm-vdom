@@ -1,4 +1,4 @@
-module Dominator.Json where
+module Dominator.Decode where
 
 import Prelude
 import Data.Foreign (Foreign, F, ForeignError(ForeignError))

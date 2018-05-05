@@ -39,7 +39,7 @@ import Prelude
 
 import Dominator.Html (Attribute)
 import Dominator.Native.VirtualDom as VirtualDom
-import Dominator.Json (Decoder, succeed)
+import Dominator.Decode (Decoder, succeed)
 
 import Data.Foreign.Class (class Decode, decode)
 import Data.Foreign.Index (readProp)

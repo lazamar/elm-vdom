@@ -12,7 +12,7 @@ module Dominator.Native.VirtualDom
 
 import Prelude
 
-import Dominator.Json (Decoder)
+import Dominator.Decode (Decoder)
 
 import Control.Monad.Eff (kind Effect)
 import Data.List (List, fromFoldable)
