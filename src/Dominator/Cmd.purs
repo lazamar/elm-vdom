@@ -1,4 +1,4 @@
-module Elm.Cmd where
+module Dominator.Cmd where
 
 import Prelude
 
@@ -8,7 +8,7 @@ import Control.Monad.Eff.Exception (Error)
 import Control.Monad.Aff (Aff, runAff_, effCanceler, makeAff)
 import Data.Either (Either(Right, Left))
 
--- Aff is equivalent to Tasks in Elm
+-- Aff is equivalent to Tasks in Dominator
 
 type Cmd eff b = ContT Unit (Eff eff) b
 

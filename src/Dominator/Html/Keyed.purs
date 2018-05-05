@@ -1,4 +1,4 @@
-module Elm.Html.Keyed ( node , ol , ul ) where
+module Dominator.Html.Keyed ( node , ol , ul ) where
 
 {-| A keyed node helps optimize cases where children are getting added, moved,
 removed, etc. Common examples include:
@@ -19,8 +19,8 @@ efficiently.
 -}
 
 
-import Elm.Html (Attribute, Html)
-import Elm.Native.VirtualDom as VirtualDom
+import Dominator.Html (Attribute, Html)
+import Dominator.Native.VirtualDom as VirtualDom
 import Data.Tuple (Tuple)
 
 

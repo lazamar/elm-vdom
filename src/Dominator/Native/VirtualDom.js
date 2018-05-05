@@ -1487,7 +1487,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         return function(init, flags, domNode) {
             if (typeof flagDecoder === "undefined") {
                 var errorMessage =
-                    "Are you trying to sneak a Never value into Elm? Trickster!\n" +
+                    "Are you trying to sneak a Never value into Dominator? Trickster!\n" +
                     "It looks like " +
                     moduleName +
                     ".main is defined with `programWithFlags` but has type `Program Never`.\n" +
@@ -1505,7 +1505,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
                 "Trying to initialize the `" +
                 moduleName +
                 "` module with an unexpected flag.\n" +
-                "I tried to convert it to an Elm value, but ran into this problem:\n\n" +
+                "I tried to convert it to an Dominator value, but ran into this problem:\n\n" +
                 result.value0;
 
             crash(errorMessage, domNode);
@@ -1516,7 +1516,7 @@ var _elm_lang$virtual_dom$Native_VirtualDom = (function() {
         if (domNode) {
             domNode.innerHTML =
                 '<div style="padding-left:1em;">' +
-                '<h2 style="font-weight:normal;"><b>Oops!</b> Something went wrong when starting your Elm program.</h2>' +
+                '<h2 style="font-weight:normal;"><b>Oops!</b> Something went wrong when starting your Dominator program.</h2>' +
                 '<pre style="padding-left:1em;">' +
                 errorMessage +
                 "</pre>" +

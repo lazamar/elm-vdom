@@ -1,4 +1,4 @@
-module Elm.Native.Scheduler where
+module Dominator.Native.Scheduler where
 
 data Scheduler = Scheduler
 

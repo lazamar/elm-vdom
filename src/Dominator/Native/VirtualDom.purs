@@ -1,4 +1,4 @@
-module Elm.Native.VirtualDom 
+module Dominator.Native.VirtualDom 
   ( DOM
   , Node
   , Renderer, normalRenderer
@@ -12,7 +12,7 @@ module Elm.Native.VirtualDom
 
 import Prelude
 
-import Elm.Json (Decoder)
+import Dominator.Json (Decoder)
 
 import Control.Monad.Eff (kind Effect)
 import Data.List (List, fromFoldable)
@@ -36,7 +36,7 @@ foreign import normalRenderer :: Renderer
 -}
 data Node msg = Node
 
-{-| This function is useful when nesting components with [the Elm
+{-| This function is useful when nesting components with [the Dominator
 Architecture](https://github.com/evancz/elm-architecture-tutorial/). It lets
 you transform the messages produced by a subtree.
 

@@ -1,4 +1,4 @@
-module Elm.Html.Attributes
+module Dominator.Html.Attributes
   ( style, property, attribute
   , class_, classList, id, title, hidden
   , type_, value, defaultValue, checked, placeholder, selected
@@ -88,8 +88,8 @@ Attributes that can be attached to any HTML tag but are less commonly used.
 -}
 
 import Prelude
-import Elm.Html (Attribute)
-import Elm.Native.VirtualDom as VirtualDom
+import Dominator.Html (Attribute)
+import Dominator.Native.VirtualDom as VirtualDom
 
 import Data.Foreign (Foreign, F, toForeign)
 import Data.List (List, fromFoldable)

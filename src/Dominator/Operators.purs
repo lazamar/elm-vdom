@@ -1,4 +1,4 @@
-module Elm.Operators (module Pipe, (!) ) where
+module Dominator.Operators (module Pipe, (!) ) where
 
 import Data.Function.Pipe as Pipe 
 import Data.Tuple (Tuple(Tuple))

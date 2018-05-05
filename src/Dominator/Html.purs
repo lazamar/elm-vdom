@@ -1,5 +1,5 @@
 
-module Elm.Html
+module Dominator.Html
   ( DOM, Html, Attribute
   , text, node
   , beginnerProgram, program
@@ -86,11 +86,11 @@ expect to use frequently will be closer to the top.
 -}
 
 import Prelude
-import Elm.Cmd (Cmd)
-import Elm.Native.VirtualDom as VirtualDom 
-import Elm.Native.Scheduler (scheduler)
-import Elm.Native.Platform as Platform
-import Elm.Operators ((!))
+import Dominator.Cmd (Cmd)
+import Dominator.Native.VirtualDom as VirtualDom 
+import Dominator.Native.Scheduler (scheduler)
+import Dominator.Native.Platform as Platform
+import Dominator.Operators ((!))
 
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
@@ -150,7 +150,7 @@ text =
 
 {-| Create a [`Program`][program] that describes how your whole app works.
 
-Read about [The Elm Architecture][tea] to learn how to use this. Just do it.
+Read about [The Dominator Architecture][tea] to learn how to use this. Just do it.
 The additional context is very worthwhile! (Honestly, it is best to just read
 that guide from front to back instead of muddling around and reading it
 piecemeal.)
@@ -176,7 +176,7 @@ beginnerProgram { model: model, view: view, update: update } =
 
 {-| Create a [`Program`][program] that describes how your whole app works.
 
-Read about [The Elm Architecture][tea] to learn how to use this. Just do it.
+Read about [The Dominator Architecture][tea] to learn how to use this. Just do it.
 Commands and subscriptions make way more sense when you work up to them
 gradually and see them in context with examples.
 

@@ -1,4 +1,4 @@
-module Elm.Html.Events
+module Dominator.Html.Events
   ( onClick, onDoubleClick
   , onMouseDown, onMouseUp
   , onMouseEnter, onMouseLeave
@@ -37,9 +37,9 @@ of events as seen in the [TodoMVC][] example.
 
 import Prelude
 
-import Elm.Html (Attribute)
-import Elm.Native.VirtualDom as VirtualDom
-import Elm.Json (Decoder, succeed)
+import Dominator.Html (Attribute)
+import Dominator.Native.VirtualDom as VirtualDom
+import Dominator.Json (Decoder, succeed)
 
 import Data.Foreign.Class (class Decode, decode)
 import Data.Foreign.Index (readProp)
@@ -174,11 +174,11 @@ The first argument is the event name in the same format as with JavaScript's
 [`addEventListener`][aEL] function.
 
 The second argument is a JSON decoder. Read more about these [here][decoder].
-When an event occurs, the decoder tries to turn the event object into an Elm
+When an event occurs, the decoder tries to turn the event object into an Dominator
 value. If successful, the value is routed to your `update` function. In the
 case of `onClick` we always just succeed with the given `message`.
 
-If this is confusing, work through the [Elm Architecture Tutorial][tutorial].
+If this is confusing, work through the [Dominator Architecture Tutorial][tutorial].
 It really does help!
 
 [aEL]:: forall msg. https:: forall msg.//developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener

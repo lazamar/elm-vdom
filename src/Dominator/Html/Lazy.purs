@@ -1,6 +1,6 @@
-module Elm.Html.Lazy ( lazy , lazy2 , lazy3 ) where
+module Dominator.Html.Lazy ( lazy , lazy2 , lazy3 ) where
 
-{-| Since all Elm functions are pure we have a guarantee that the same input
+{-| Since all Dominator functions are pure we have a guarantee that the same input
 will always result in the same output. This module gives us tools to be lazy
 about building `Html` that utilize this fact.
 
@@ -16,8 +16,8 @@ benchmark to be sure!
 
 -}
 
-import Elm.Html (Html)
-import Elm.Native.VirtualDom as VirtualDom
+import Dominator.Html (Html)
+import Dominator.Native.VirtualDom as VirtualDom
 
 
 {-| A performance optimization that delays the building of virtual DOM nodes.

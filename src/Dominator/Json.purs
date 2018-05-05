@@ -1,4 +1,4 @@
-module Elm.Json where
+module Dominator.Json where
 
 import Prelude
 import Data.Foreign (Foreign, F, ForeignError(ForeignError))
