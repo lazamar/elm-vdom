@@ -17,7 +17,7 @@ benchmark to be sure!
 -}
 
 import Dominator.Html (Html)
-import Dominator.Native.VirtualDom as VirtualDom
+import Dominator.Core.VirtualDom as VirtualDom
 
 
 {-| A performance optimization that delays the building of virtual DOM nodes.

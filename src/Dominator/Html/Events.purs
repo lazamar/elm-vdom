@@ -37,13 +37,12 @@ of events as seen in the [TodoMVC][] example.
 
 import Prelude
 
+import Dominator.Core.VirtualDom as VirtualDom
 import Dominator.Html (Attribute)
-import Dominator.Native.VirtualDom as VirtualDom
 import Dominator.Decode (Decoder, succeed)
 
-import Data.Foreign.Class (class Decode, decode)
 import Data.Foreign.Index (readProp)
-import Data.Foreign (Foreign, F, readString, readBoolean, readInt)
+import Data.Foreign (readBoolean, readInt, readString)
 
 
 -- MOUSE EVENTS
@@ -137,7 +136,7 @@ onSubmit msg =
   onWithOptions "submit" onSubmitOptions (const $ succeed msg)
 
 
-onSubmitOptions :: ∀ msg. Options
+onSubmitOptions :: Options
 onSubmitOptions =
   VirtualDom.defaultOptions { preventDefault = true }
 
@@ -236,7 +235,7 @@ defaultOptions =
 You probably will never need this, but hopefully it gives some insights into
 how to make custom event handlers.
 -}
-targetValue :: ∀ msg. Decoder String
+targetValue :: Decoder String
 targetValue f = 
   readProp "target" f 
   >>= readProp "value"
@@ -273,7 +272,7 @@ helpers here for `onKeyUp`, `onKeyDown`, `onKeyPress`, etc.
 
 type KeyCode = { keyCode :: Int }
 
-keyCode :: ∀ msg. Decoder Int
+keyCode :: Decoder Int
 keyCode f =
   readProp "keyCode" f
   >>= readInt

@@ -20,7 +20,8 @@ efficiently.
 
 
 import Dominator.Html (Attribute, Html)
-import Dominator.Native.VirtualDom as VirtualDom
+import Dominator.Core.VirtualDom as VirtualDom
+
 import Data.Tuple (Tuple)
 
 

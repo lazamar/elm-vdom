@@ -89,12 +89,12 @@ Attributes that can be attached to any HTML tag but are less commonly used.
 
 import Prelude
 import Dominator.Html (Attribute)
-import Dominator.Native.VirtualDom as VirtualDom
+import Dominator.Core.VirtualDom as VirtualDom
 
-import Data.Foreign (Foreign, F, toForeign)
-import Data.List (List, fromFoldable)
-import Data.Tuple (Tuple(Tuple), fst, snd)
-import Data.Foldable (intercalate, fold)
+import Data.Foreign (Foreign, toForeign)
+import Data.List (fromFoldable)
+import Data.Tuple (Tuple, fst, snd)
+import Data.Foldable (intercalate)
 import Data.Function.Pipe ((|>))
 import Data.Array (filter)
 
@@ -145,8 +145,8 @@ is paired with. For example, maybe we want a way to view notices:: ∀ msg.
         [ text notice.content ]
 -}
 classList :: ∀ msg. Array (Tuple String Boolean) -> Attribute msg
-classList list =
-  list
+classList clist =
+  clist
     |> filter snd
     |> map fst
     |> intercalate " "

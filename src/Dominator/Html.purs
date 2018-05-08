@@ -1,8 +1,10 @@
-
+{-| Functions for creating html elements and programs GUIs
+-}
 module Dominator.Html
-  ( DOM, Html, Attribute, HtmlRef, ProgramContainer(..)
-  , text, node
+  ( DOM, Html, Attribute
   , beginnerProgram, program
+  , module Platform
+  , text, node
   , h1, h2, h3, h4, h5, h6
   , div, p, hr, pre, blockquote
   , span, a, code, em, strong, i, b, u, sub, sup, br
@@ -21,80 +23,16 @@ module Dominator.Html
   , details, summary, menuitem, menu
   ) where
 
-{-| This file is organized roughly in order of popularity. The tags which you'd
-expect to use frequently will be closer to the top.
-
-# Primitives
-@docs Html, Attribute, text, node, map
-
-# Programs
-@docs beginnerProgram, program, programWithFlags
-
-# Tags
-
-## Headers
-@docs h1, h2, h3, h4, h5, h6
-
-## Grouping Content
-@docs div, p, hr, pre, blockquote
-
-## Text
-@docs span, a, code, em, strong, i, b, u, sub, sup, br
-
-## Lists
-@docs ol, ul, li, dl, dt, dd
-
-## Emdedded Content
-@docs img, iframe, canvas, math
-
-## Inputs
-@docs form, input, textarea, button, select, option
-
-## Sections
-@docs section, nav, article, aside, header, footer, address, main_, body
-
-## Figures
-@docs figure, figcaption
-
-## Tables
-@docs table, caption, colgroup, col, tbody, thead, tfoot, tr, td, th
-
-
-## Less Common Elements
-
-### Less Common Inputs
-@docs fieldset, legend, label, datalist, optgroup, keygen, output, progress, meter
-
-### Audio and Video
-@docs audio, video, source, track
-
-### Embedded Objects
-@docs embed, object, param
-
-### Text Edits
-@docs ins, del
-
-### Semantic Text
-@docs small, cite, dfn, abbr, time, var, samp, kbd, s, q
-
-### Less Common Text Tags
-@docs mark, ruby, rt, rp, bdi, bdo, wbr
-
-## Interactive Elements
-@docs details, summary, menuitem, menu
-
--}
-
 import Prelude
+
 import Dominator.Cmd (Cmds)
-import Dominator.Native.VirtualDom as VirtualDom 
-import Dominator.Native.Scheduler (scheduler)
-import Dominator.Native.Platform as Platform
+import Dominator.Core.VirtualDom as VirtualDom 
+import Dominator.Core.Platform hiding (program) as Platform 
+import Dominator.Core.Platform as P
 import Dominator.Operators ((!))
 
-import Data.Maybe (Maybe(Just, Nothing))
-import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
+import Data.Tuple (Tuple)
 import Data.Monoid (mempty)
 
 
@@ -148,13 +86,6 @@ text =
 
 -- CREATING PROGRAMS
 
-type HtmlRef = Platform.HtmlRef
-
-data ProgramContainer
-  = FullScreen
-  | EmbedWithin HtmlRef
-
-
 {-| Create a [`Program`][program] that describes how your whole app works.
 
 Read about [The Dominator Architecture][tea] to learn how to use this. Just do it.
@@ -173,7 +104,7 @@ beginnerProgram
     }
     -> Eff (dom :: DOM | eff) Unit
 beginnerProgram { model: model, view: view, update: update } =
-  program FullScreen
+  program P.FullScreen
     { init : model ! mempty
     , update : (\msg m -> update msg m ! mempty)
     , view : view
@@ -191,7 +122,7 @@ gradually and see them in context with examples.
 -}
 program ::
     ∀ msg model eff. 
-    ProgramContainer ->
+    P.ProgramContainer ->
     { init :: (Tuple model (Cmds (dom :: DOM | eff) msg))
     , update :: msg -> model -> (Tuple model (Cmds (dom :: DOM | eff) msg))
     -- , subscriptions :: ∀ msg. model -> Sub msg
@@ -199,15 +130,8 @@ program ::
     }
 	-> Eff (dom :: DOM | eff) Unit
 program container { init: init, update: update, view: view } =
-  let
-    maybeContainer = case container of
-      FullScreen -> Nothing
-      EmbedWithin el -> Just el
-  in
-  	Platform.program
-      maybeContainer
-  		scheduler
-  		VirtualDom.normalRenderer
+  	P.program
+      container
   		init
   		update
   		view
