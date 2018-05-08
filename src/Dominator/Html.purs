@@ -1,6 +1,6 @@
 
 module Dominator.Html
-  ( DOM, Html, Attribute
+  ( DOM, Html, Attribute, HtmlElement
   , text, node
   , beginnerProgram, program
   , h1, h2, h3, h4, h5, h6
@@ -86,12 +86,13 @@ expect to use frequently will be closer to the top.
 -}
 
 import Prelude
-import Dominator.Cmd (Cmd)
+import Dominator.Cmd (Cmds)
 import Dominator.Native.VirtualDom as VirtualDom 
 import Dominator.Native.Scheduler (scheduler)
 import Dominator.Native.Platform as Platform
 import Dominator.Operators ((!))
 
+import Data.Maybe (Maybe(Nothing))
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
 import Data.Monoid (mempty)
@@ -147,6 +148,7 @@ text =
 
 -- CREATING PROGRAMS
 
+type HtmlElement = Platform.HtmlElement
 
 {-| Create a [`Program`][program] that describes how your whole app works.
 
@@ -166,13 +168,12 @@ beginnerProgram
     }
     -> Eff (dom :: DOM | eff) Unit
 beginnerProgram { model: model, view: view, update: update } =
-  program
+  program Nothing
     { init : model ! mempty
     , update : (\msg m -> update msg m ! mempty)
     , view : view
     -- , subscriptions = \_ -> Sub.none
     }
-
 
 {-| Create a [`Program`][program] that describes how your whole app works.
 
@@ -185,14 +186,16 @@ gradually and see them in context with examples.
 -}
 program ::
     forall msg model eff. 
-    { init :: (Tuple model (Array (Cmd (dom :: DOM | eff) msg)))
-    , update :: msg -> model -> (Tuple model (Array (Cmd (dom :: DOM | eff) msg)))
+    Maybe HtmlElement ->
+    { init :: (Tuple model (Cmds (dom :: DOM | eff) msg))
+    , update :: msg -> model -> (Tuple model (Cmds (dom :: DOM | eff) msg))
     -- , subscriptions :: forall msg. model -> Sub msg
     , view :: model -> Html msg
     }
 	-> Eff (dom :: DOM | eff) Unit
-program { init: init, update: update, view: view } =
+program mayEl { init: init, update: update, view: view } =
 	Platform.program
+    mayEl
 		scheduler
 		VirtualDom.normalRenderer
 		init

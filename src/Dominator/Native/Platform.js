@@ -1,12 +1,14 @@
 /* eslint-disable no-use-before-define */
 
-function F5(fn) {
+function F6(fn) {
     return function(a) {
         return function(b) {
             return function(c) {
                 return function(d) {
                     return function(e) {
-                        return fn(a, b, c, d, e);
+                        return function(f) {
+                            return fn(a, b, c, d, e, f);
+                        };
                     };
                 };
             };
@@ -38,12 +40,12 @@ function dispatchCmds(cmds, enqueue) {
     }
 }
 
-function program(scheduler, normalRenderer, init, update, view) {
+function program(maybeParentNode, scheduler, normalRenderer, init, update, view) {
     // -- create renderer --
 
     return function() {
-        var parentNode = document.createElement("div");
-        document.body.appendChild(parentNode);
+        var parentNode =
+            maybeParentNode.constructor.name === "Just" ? maybeParentNode.value0 : document.body;
 
         var initialModel = init.value0;
         var initialCmds = init.value1;
@@ -71,4 +73,4 @@ function program(scheduler, normalRenderer, init, update, view) {
     };
 }
 
-exports.program = F5(program);
+exports.program = F6(program);
