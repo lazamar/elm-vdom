@@ -1,5 +1,10 @@
 {
   "name": "purescript-dominator",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lazamar/purescript-dominator.git"
+  },
   "ignore": [
     "**/.*",
     "node_modules",
@@ -8,7 +13,7 @@
   ],
   "dependencies": {
     "purescript-pipe-op": "^1.0.0",
-    "purescript-dominator-core": "https://github.com/lazamar/purescript-dominator-core.git"
+    "purescript-dominator-core": "^0.1.1"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

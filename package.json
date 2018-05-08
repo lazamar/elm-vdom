@@ -1,9 +1,8 @@
 {
   "name": "purescript-dominator",
-  "version": "1.0.0",
+  "license": "BSD-2-Clause",
   "main": "index.js",
   "author": "<lazaronijunior@gmail.com>",
-  "license": "MIT",
   "scripts": {
   	"build": "pulp build --to build/output.js",
   	"watch": "pulp --watch build --to build/output.js"
