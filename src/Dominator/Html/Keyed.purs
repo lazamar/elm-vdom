@@ -29,18 +29,18 @@ node. You want this when you have a list of nodes that is changing: adding
 nodes, removing nodes, etc. In these cases, the unique identifiers help make
 the DOM modifications more efficient.
 -}
-node :: forall msg. String -> Array (Attribute msg) -> Array ( Tuple String ( Html msg  )) -> Html msg
+node :: ∀ msg. String -> Array (Attribute msg) -> Array ( Tuple String ( Html msg  )) -> Html msg
 node =
   VirtualDom.keyedNode
 
 
 {-|-}
-ol :: forall msg. Array (Attribute msg) -> Array ( Tuple String ( Html msg  )) -> Html msg
+ol :: ∀ msg. Array (Attribute msg) -> Array ( Tuple String ( Html msg  )) -> Html msg
 ol =
   node "ol"
 
 
 {-|-}
-ul :: forall msg. Array (Attribute msg) -> Array (Tuple String ( Html msg  )) -> Html msg
+ul :: ∀ msg. Array (Attribute msg) -> Array (Tuple String ( Html msg  )) -> Html msg
 ul =
   node "ul"

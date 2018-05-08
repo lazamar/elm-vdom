@@ -12,7 +12,7 @@ import Control.Monad.Eff (Eff)
 
 type HtmlRef = Foreign 
 
-foreign import program :: forall msg model eff. 
+foreign import program :: ∀ msg model eff. 
 	Maybe HtmlRef
  	-> Scheduler 
 	-> Renderer
