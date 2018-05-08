@@ -29,10 +29,9 @@ import Dominator.Cmd (Cmds)
 import Dominator.Core.VirtualDom as VirtualDom 
 import Dominator.Core.Platform hiding (program) as Platform 
 import Dominator.Core.Platform as P
-import Dominator.Operators ((!))
+import Dominator.Operators (type (!), (!))
 
 import Control.Monad.Eff (Eff)
-import Data.Tuple (Tuple)
 import Data.Monoid (mempty)
 
 
@@ -123,8 +122,8 @@ gradually and see them in context with examples.
 program ::
     ∀ msg model eff. 
     P.ProgramContainer ->
-    { init :: (Tuple model (Cmds (dom :: DOM | eff) msg))
-    , update :: msg -> model -> (Tuple model (Cmds (dom :: DOM | eff) msg))
+    { init :: (model ! Cmds (dom :: DOM | eff) msg)
+    , update :: msg -> model -> (model ! Cmds (dom :: DOM | eff) msg)
     -- , subscriptions :: ∀ msg. model -> Sub msg
     , view :: model -> Html msg
     }

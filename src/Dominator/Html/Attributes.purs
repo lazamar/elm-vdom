@@ -90,10 +90,11 @@ Attributes that can be attached to any HTML tag but are less commonly used.
 import Prelude
 import Dominator.Html (Attribute)
 import Dominator.Core.VirtualDom as VirtualDom
+import Dominator.Operators (type (!))
 
 import Data.Foreign (Foreign, toForeign)
 import Data.List (fromFoldable)
-import Data.Tuple (Tuple, fst, snd)
+import Data.Tuple (fst, snd)
 import Data.Foldable (intercalate)
 import Data.Function.Pipe ((|>))
 import Data.Array (filter)
@@ -124,7 +125,7 @@ There is no `Html.Styles` module because best practices for working with HTML
 suggest that this should primarily be specified in CSS files. So the general
 recommendation is to use this function lightly.
 -}
-style :: ∀ msg. Array (Tuple String String) -> Attribute msg
+style :: ∀ msg. Array (String ! String) -> Attribute msg
 style l =
   VirtualDom.style $ fromFoldable l
 
@@ -144,7 +145,7 @@ is paired with. For example, maybe we want a way to view notices:: ∀ msg.
         ]
         [ text notice.content ]
 -}
-classList :: ∀ msg. Array (Tuple String Boolean) -> Attribute msg
+classList :: ∀ msg. Array (String ! Boolean) -> Attribute msg
 classList clist =
   clist
     |> filter snd
