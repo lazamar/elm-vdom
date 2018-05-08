@@ -1,6 +1,6 @@
 
 module Dominator.Html
-  ( DOM, Html, Attribute, HtmlElement
+  ( DOM, Html, Attribute, HtmlRef, ProgramContainer(..)
   , text, node
   , beginnerProgram, program
   , h1, h2, h3, h4, h5, h6
@@ -92,7 +92,7 @@ import Dominator.Native.Scheduler (scheduler)
 import Dominator.Native.Platform as Platform
 import Dominator.Operators ((!))
 
-import Data.Maybe (Maybe(Nothing))
+import Data.Maybe (Maybe(Just, Nothing))
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
 import Data.Monoid (mempty)
@@ -148,7 +148,12 @@ text =
 
 -- CREATING PROGRAMS
 
-type HtmlElement = Platform.HtmlElement
+type HtmlRef = Platform.HtmlRef
+
+data ProgramContainer
+  = FullScreen
+  | EmbedWithin HtmlRef
+
 
 {-| Create a [`Program`][program] that describes how your whole app works.
 
@@ -168,7 +173,7 @@ beginnerProgram
     }
     -> Eff (dom :: DOM | eff) Unit
 beginnerProgram { model: model, view: view, update: update } =
-  program Nothing
+  program FullScreen
     { init : model ! mempty
     , update : (\msg m -> update msg m ! mempty)
     , view : view
@@ -186,21 +191,26 @@ gradually and see them in context with examples.
 -}
 program ::
     forall msg model eff. 
-    Maybe HtmlElement ->
+    ProgramContainer ->
     { init :: (Tuple model (Cmds (dom :: DOM | eff) msg))
     , update :: msg -> model -> (Tuple model (Cmds (dom :: DOM | eff) msg))
     -- , subscriptions :: forall msg. model -> Sub msg
     , view :: model -> Html msg
     }
 	-> Eff (dom :: DOM | eff) Unit
-program mayEl { init: init, update: update, view: view } =
-	Platform.program
-    mayEl
-		scheduler
-		VirtualDom.normalRenderer
-		init
-		update
-		view
+program container { init: init, update: update, view: view } =
+  let
+    maybeContainer = case container of
+      FullScreen -> Nothing
+      EmbedWithin el -> Just el
+  in
+  	Platform.program
+      maybeContainer
+  		scheduler
+  		VirtualDom.normalRenderer
+  		init
+  		update
+  		view
 
 
 

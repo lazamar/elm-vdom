@@ -10,10 +10,10 @@ import Data.Foreign (Foreign)
 import Data.Tuple (Tuple)
 import Control.Monad.Eff (Eff)
 
-type HtmlElement = Foreign 
+type HtmlRef = Foreign 
 
 foreign import program :: forall msg model eff. 
-	Maybe HtmlElement
+	Maybe HtmlRef
  	-> Scheduler 
 	-> Renderer
 	-> (Tuple model (Cmds (dom :: DOM | eff) msg)) 			
